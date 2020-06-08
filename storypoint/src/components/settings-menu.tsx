@@ -27,7 +27,7 @@ export default function SettingsMenu() {
             text: <span>Theme switched to <strong>{selection}</strong></span>,
             iconType: 'brush',
             color: 'primary'
-        })
+        });
     };
 
     return (
