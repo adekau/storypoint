@@ -25,7 +25,7 @@ export default function CreateRoom() {
 
     const create = () => {
         setLoading(true);
-        ws.send(JSON.stringify({
+        ws?.send(JSON.stringify({
             event: 'create',
             roomName,
             nickname

@@ -13,9 +13,8 @@ const onMsg = (msg: MessageEvent) => {
 
 const onError = (setter: SetterOrUpdater<WebSocket>) => (ws: WebSocket) => (error: unknown) => {
     console.error('WebSocket error', error);
-    if (ws && !ws.CLOSED) {
+    if (ws && !ws.CLOSED) 
         ws.close();
-    }
     setter(new WebSocket('ws://localhost:8080/'));
 }
 
