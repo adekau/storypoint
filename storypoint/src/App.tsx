@@ -1,5 +1,3 @@
-import './App.css';
-
 import { EuiHeader, EuiHeaderLogo, EuiPage } from '@elastic/eui';
 import React from 'react';
 

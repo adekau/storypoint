@@ -1,41 +1,40 @@
 import { useEffect } from 'react';
-import { SetterOrUpdater, useRecoilState } from 'recoil';
+import { useRecoilState } from 'recoil';
 
 import { webSocketState } from '../atoms/websocket';
-
-const onOpen = () => {
-    console.log('Opened');
-};
-
-const onMsg = (msg: MessageEvent) => {
-    console.log('Message received', msg);
-};
-
-const onError = (setter: SetterOrUpdater<WebSocket>) => (ws: WebSocket) => (error: unknown) => {
-    console.error('WebSocket error', error);
-    if (ws && !ws.CLOSED) 
-        ws.close();
-    setter(new WebSocket('ws://localhost:8080/'));
-}
+import { createWebSocket } from '../helpers/create-web-socket';
+import { useGlobalToast } from './useGlobalToast.hook';
 
 export function useWebSocket(): WebSocket {
     const [webSocket, setWebSocket] = useRecoilState(webSocketState);
+    const { addConnectionErrorToast, addConnectionOnlineToast } = useGlobalToast();
+
     useEffect(
         () => {
-            console.log('using effect');
-            const err = onError(setWebSocket)(webSocket);
+            const setNewWebSocket = (showOnlineToast?: boolean) => setWebSocket(createWebSocket({
+                onError: (error) => {
+                    const w = error.currentTarget as WebSocket;
+                    if (w.readyState === 3) {
+                        addConnectionErrorToast();
+                        setTimeout(() => setNewWebSocket(true), 10000);
+                    }
+                },
+                onOpen: () => {
+                    if (showOnlineToast)
+                        addConnectionOnlineToast();
+                }
+            }));
 
-            webSocket.addEventListener('open', onOpen);
-            webSocket.addEventListener('message', onMsg);
-            webSocket.addEventListener('error', err);
-
-            return () => {
-                webSocket.removeEventListener('open', onOpen);
-                webSocket.removeEventListener('message', onMsg);
-                webSocket.removeEventListener('error', err);
-            };
+            if (!webSocket)
+                setNewWebSocket();
         },
-        [webSocket, setWebSocket]
+        [
+            webSocket,
+            setWebSocket,
+            addConnectionErrorToast,
+            addConnectionOnlineToast
+        ]
     );
-    return webSocket;
+
+    return webSocket!;
 }
