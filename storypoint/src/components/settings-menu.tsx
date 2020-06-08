@@ -12,14 +12,22 @@ import { useRecoilState } from 'recoil';
 
 import { isOpenState } from '../atoms/settings-menu';
 import { themeState } from '../atoms/theme';
+import { useGlobalToast } from '../hooks/global-toast.hook';
 
 export default function SettingsMenu() {
     const [isOpen, setIsOpen] = useRecoilState(isOpenState);
     const [theme, setTheme] = useRecoilState(themeState);
+    const { addToast } = useGlobalToast();
 
     const themeChange = (selection: 'light' | 'dark') => {
         setTheme(selection);
         localStorage.setItem('storypoint-theme', selection);
+        addToast({
+            title: 'Theme Changed',
+            text: <span>Theme switched to <strong>{selection}</strong></span>,
+            iconType: 'brush',
+            color: 'primary'
+        })
     };
 
     return (
