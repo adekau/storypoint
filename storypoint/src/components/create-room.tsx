@@ -15,8 +15,22 @@ import {
 } from '@elastic/eui';
 import React, { useState } from 'react';
 
+import { useWebSocket } from '../hooks/websocket.hook';
+
 export default function CreateRoom() {
     const [loading, setLoading] = useState(false);
+    const [roomName, setRoomName] = useState('');
+    const [nickname, setNickname] = useState('');
+    const ws = useWebSocket();
+
+    const create = () => {
+        setLoading(true);
+        ws.send(JSON.stringify({
+            event: 'create',
+            roomName,
+            nickname
+        }));
+    }
 
     return (
         <EuiPageBody
@@ -34,12 +48,14 @@ export default function CreateRoom() {
                     </EuiPageContentHeaderSection>
                 </EuiPageContentHeader>
                 <EuiPageContentBody>
-                    <EuiForm>
+                    <EuiForm component="form">
                         <EuiFormRow label="Room Name">
                             <EuiFieldText
                                 placeholder="Room Name"
                                 id="roomName"
-                                onChange={e => { }}
+                                value={roomName}
+                                onChange={name => setRoomName(name.target.value)}
+                                required
                             />
                         </EuiFormRow>
 
@@ -49,7 +65,9 @@ export default function CreateRoom() {
                             <EuiFieldText
                                 placeholder="Nickname"
                                 id="nickname"
-                                onChange={e => { }}
+                                value={nickname}
+                                onChange={nick => setNickname(nick.target.value)}
+                                required
                             />
                         </EuiFormRow>
 
@@ -62,7 +80,7 @@ export default function CreateRoom() {
                                     type="submit"
                                     fill
                                     iconType="plusInCircleFilled"
-                                    onClick={() => setLoading(true)}>
+                                    onClick={create}>
                                     Create
                                         </EuiButton>
                             </EuiFlexItem>

@@ -3,7 +3,7 @@ import { acceptable, acceptWebSocket, WebSocket } from 'https://deno.land/std/ws
 
 import handle from './room.ts';
 
-const server = serve({ port: 3000 });
+const server = serve({ port: 8080 });
 
 for await (const req of server) {
     if (acceptable(req)) {

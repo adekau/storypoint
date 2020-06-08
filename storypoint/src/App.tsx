@@ -1,20 +1,14 @@
 import './App.css';
 
 import { EuiHeader, EuiHeaderLogo, EuiPage } from '@elastic/eui';
-import React, { useEffect } from 'react';
-import { useRecoilValue } from 'recoil';
+import React from 'react';
 
-import { themeState } from './atoms/theme';
 import CreateRoom from './components/create-room';
 import SettingsMenu from './components/settings-menu';
+import { useTheme } from './hooks/useTheme.hook';
 
 function App() {
-  const theme = useRecoilValue(themeState);
-
-  useEffect(() => {
-    const themeRel = document.querySelector('#themeRel');
-    themeRel?.setAttribute('href', `css/eui_theme_${theme}.css`); 
-  }, [theme]);
+  useTheme();
 
   return (
     <>

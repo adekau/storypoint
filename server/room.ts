@@ -25,7 +25,7 @@ export default async function handle(ws: WebSocket) {
 
     try {
         for await (const data of ws) {
-            let parsed;
+            let parsed: any;
             if (typeof data === "string") {
                 parsed = JSON.parse(data);
             } else if (data instanceof Uint8Array) {
@@ -35,6 +35,7 @@ export default async function handle(ws: WebSocket) {
                 console.log("ws:Ping", body);
             } else if (isWebSocketCloseEvent(data)) {
                 await removeUser(userId);
+                Logger.log(`User ${userId} disconnected.`);
             }
 
             if (parsed)
@@ -53,25 +54,44 @@ export default async function handle(ws: WebSocket) {
     }
 }
 
-async function handleEvent(opts: { ev: any, userId: string, ws: WebSocket }): Promise<void> {
-    switch (opts.ev.event) {
+async function handleEvent({ ev, userId, ws }: { ev: any, userId: string, ws: WebSocket }): Promise<void> {
+    switch (ev.event) {
         case 'join':
-            const user: IUser = {
-                roomId: opts.ev.room,
-                websocket: opts.ws,
-                userId: opts.userId
+            const userJoin: IUser = {
+                roomId: ev.room,
+                websocket: ws,
+                userId: userId
             };
-            usersMap.set(opts.userId, user);
-            const users = [...(roomsMap.get(opts.ev.room) || [])];
-            users.push(user);
-            roomsMap.set(opts.ev.room, users);
+            usersMap.set(userId, userJoin);
+            await addUserToRoom(userJoin, ev.room);
             
-            Logger.log(`User ${user.userId} joined room ${user.roomId}.`);
+            Logger.log(`User ${userJoin.userId} joined room ${userJoin.roomId}.`);
 
-            await emitEvent(opts.ev.room);
+            await emitEvent(ev.room);
+        case 'create':
+            const roomId = v4.generate();
+            roomsMap.set(roomId, []);
+            const event = {
+                event: 'roomCreate',
+                roomId
+            };
+
+            Logger.log(`Room ${roomId} created.`);
+
+            try {
+                await ws.send(JSON.stringify(event));
+            } catch (e) {
+                Logger.warn(`User ${userId} unable to be reached while creating room.`);
+            }
         default:
             return;
     }
+}
+
+async function addUserToRoom(user: IUser, roomId: string): Promise<void> {
+    const users = [...(roomsMap.get(roomId) || [])];
+    users.push(user);
+    roomsMap.set(roomId, users);
 }
 
 async function emitEvent(roomId: string) {
