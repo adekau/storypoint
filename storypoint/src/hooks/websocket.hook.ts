@@ -3,7 +3,7 @@ import { useRecoilState } from 'recoil';
 
 import { webSocketState } from '../atoms/websocket';
 import { createWebSocket } from '../helpers/create-web-socket';
-import { useGlobalToast } from './useGlobalToast.hook';
+import { useGlobalToast } from './global-toast.hook';
 
 export function useWebSocket(): WebSocket {
     const [webSocket, setWebSocket] = useRecoilState(webSocketState);
