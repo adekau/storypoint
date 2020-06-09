@@ -12,16 +12,16 @@ export function useWebSocket(): WebSocket {
     useEffect(
         () => {
             const setNewWebSocket = (showOnlineToast?: boolean) => setWebSocket(createWebSocket({
-                onError: (error) => {
-                    const w = error.currentTarget as WebSocket;
-                    if (w.readyState === 3) {
-                        addConnectionErrorToast();
-                        setTimeout(() => setNewWebSocket(true), 10000);
-                    }
-                },
                 onOpen: () => {
                     if (showOnlineToast)
                         addConnectionOnlineToast();
+                },
+                onClose: (event) => {
+                    const ws = event.currentTarget as WebSocket;
+                    if (ws.readyState === 3) {
+                        addConnectionErrorToast();
+                        setTimeout(() => setNewWebSocket(true), 10000);
+                    }
                 }
             }));
 

@@ -1,14 +1,24 @@
-export function createWebSocket({ onOpen, onError }: { onOpen?: () => void, onError?: (error: Event) => void }): WebSocket {
+export interface WebSocketEventCallbacks {
+    onOpen?: (event: Event) => void;
+    onError?: (error: Event) => void;
+    onClose?: (event: CloseEvent) => void;
+};
+
+export function createWebSocket({ onOpen, onError, onClose }: WebSocketEventCallbacks): WebSocket {
     const ws = new WebSocket('ws://localhost:8080/');
     ws.onerror = (error) => {
         if (onError)
             onError(error);
     };
 
-    ws.onopen = () => {
-        console.log('WebSocket Opened.');
+    ws.onopen = (event: Event) => {
         if (onOpen)
-            onOpen();
+            onOpen(event);
+    };
+
+    ws.onclose = (event) => {
+        if (onClose)
+            onClose(event);
     };
 
     ws.onmessage = (msg) => {
