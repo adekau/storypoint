@@ -11,12 +11,12 @@ export function useGlobalToast() {
     const setToasts = useSetRecoilState(toastsState);
     
     return {
-        addConnectionErrorToast: () => {
+        addServerConnectionErrorToast: () => {
             setToasts(currentToasts => [
                 ...currentToasts,
                 {
                     id: (++toastCounter).toString(),
-                    title: 'Offline',
+                    title: 'Server Offline',
                     iconType: 'offline',
                     text: 'Currently unable to connect to the server. Either the server is down or you have lost internet.',
                     color: 'danger'
@@ -24,14 +24,40 @@ export function useGlobalToast() {
             ]);
         },
 
-        addConnectionOnlineToast: () => {
+        addServerConnectedToast: () => {
             setToasts(currentToasts => [
                 ...currentToasts,
                 {
                     id: (++toastCounter).toString(),
-                    title: 'Online',
+                    title: 'Server Online',
                     iconType: 'online',
                     text: 'Connection to the server has been reestablished.',
+                    color: 'success'
+                }
+            ]);
+        },
+
+        addLocalNetOfflineToast: () => {
+            setToasts(currentToasts => [
+                ...currentToasts,
+                {
+                    id: (++toastCounter).toString(),
+                    title: 'Internet Disconnected',
+                    iconType: 'offline',
+                    text: 'Your internet connection has been lost.',
+                    color: 'danger'
+                }
+            ]);
+        },
+
+        addLocalNetOnlineToast: () => {
+            setToasts(currentToasts => [
+                ...currentToasts,
+                {
+                    id: (++toastCounter).toString(),
+                    title: 'Internet Connected',
+                    iconType: 'online',
+                    text: 'Your internet connection has been restored.',
                     color: 'success'
                 }
             ]);

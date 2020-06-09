@@ -4,10 +4,12 @@ import React from 'react';
 import CreateRoom from './components/create-room';
 import GlobalToast from './components/global-toast';
 import SettingsMenu from './components/settings-menu';
+import { useConnectionWatcher } from './hooks/connection-watcher.hook';
 import { useTheme } from './hooks/theme.hook';
 
 function App() {
   useTheme();
+  useConnectionWatcher();
 
   return (
     <>

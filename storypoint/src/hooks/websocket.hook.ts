@@ -7,19 +7,19 @@ import { useGlobalToast } from './global-toast.hook';
 
 export function useWebSocket(): WebSocket {
     const [webSocket, setWebSocket] = useRecoilState(webSocketState);
-    const { addConnectionErrorToast, addConnectionOnlineToast } = useGlobalToast();
+    const { addServerConnectionErrorToast, addServerConnectedToast } = useGlobalToast();
 
     useEffect(
         () => {
             const setNewWebSocket = (showOnlineToast?: boolean) => setWebSocket(createWebSocket({
                 onOpen: () => {
                     if (showOnlineToast)
-                        addConnectionOnlineToast();
+                        addServerConnectedToast();
                 },
                 onClose: (event) => {
                     const ws = event.currentTarget as WebSocket;
                     if (ws.readyState === 3) {
-                        addConnectionErrorToast();
+                        addServerConnectionErrorToast();
                         setTimeout(() => setNewWebSocket(true), 10000);
                     }
                 }
@@ -31,8 +31,8 @@ export function useWebSocket(): WebSocket {
         [
             webSocket,
             setWebSocket,
-            addConnectionErrorToast,
-            addConnectionOnlineToast
+            addServerConnectionErrorToast,
+            addServerConnectedToast
         ]
     );
 

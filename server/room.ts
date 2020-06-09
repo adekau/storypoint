@@ -68,6 +68,7 @@ async function handleEvent({ ev, userId, ws }: { ev: any, userId: string, ws: We
             Logger.log(`User ${userJoin.userId} joined room ${userJoin.roomId}.`);
 
             await emitEvent(ev.room);
+
         case 'create':
             const roomId = v4.generate();
             roomsMap.set(roomId, []);
@@ -83,6 +84,7 @@ async function handleEvent({ ev, userId, ws }: { ev: any, userId: string, ws: We
             } catch (e) {
                 Logger.warn(`User ${userId} unable to be reached while creating room.`);
             }
+            
         default:
             return;
     }
