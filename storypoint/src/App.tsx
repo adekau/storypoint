@@ -5,6 +5,7 @@ import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import CreateRoom from './components/create-room';
 import GlobalToast from './components/global-toast';
 import Logo from './components/logo';
+import Room from './components/room';
 import SettingsMenu from './components/settings-menu';
 import { useConnectionWatcher } from './hooks/connection-watcher.hook';
 import { useTheme } from './hooks/theme.hook';
@@ -21,7 +22,7 @@ function App() {
         </Route>
 
         <Route path="/:roomId">
-          <div>Hi</div>
+          <Room />
         </Route>
       </Switch>
     );

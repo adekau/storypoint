@@ -3,18 +3,7 @@ import { isWebSocketCloseEvent, isWebSocketPingEvent, WebSocket } from 'https://
 
 import Logger from './logger.ts';
 
-interface IUser {
-    roomId: string;
-    userId: string;
-    websocket: WebSocket;
-    name?: string;
-}
 
-interface IUserDetail {
-    roomId: string;
-    userId: string;
-    name?: string;
-}
 
 const usersMap = new Map<string, IUser>();
 const roomsMap = new Map<string, Array<IUser>>();
@@ -96,24 +85,7 @@ async function addUserToRoom(user: IUser, roomId: string): Promise<void> {
     roomsMap.set(roomId, users);
 }
 
-async function emitEvent(roomId: string) {
-    const users = roomsMap.get(roomId) || [];
 
-    for (const user of users) {
-        const event = {
-            event: 'userJoin',
-            users: translateUsers(users)
-        }
-
-        try {
-            await user.websocket.send(JSON.stringify(event));
-        } catch (e) {
-            Logger.warn(`User ${user.userId} can not be reached.`);
-            await removeUser(user.userId);
-            break;
-        }
-    }
-}
 
 async function removeUser(userId: string): Promise<void> {
     const user = usersMap.get(userId);
@@ -129,10 +101,3 @@ async function removeUser(userId: string): Promise<void> {
     }
 }
 
-function translateUsers(users: Array<IUser>): Array<IUserDetail> {
-    return users.map(user => ({
-        userId: user.userId,
-        roomId: user.roomId,
-        name: user.name
-    }));
-}
