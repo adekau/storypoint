@@ -39,8 +39,10 @@
   "devDependencies": {
     "@elastic/datemath": "^5.0.3",
     "@elastic/eui": "^25.0.0",
+    "@types/react-router-dom": "^5.1.5",
     "@types/recoil": "^0.0.0",
     "moment": "^2.26.0",
+    "react-router-dom": "^5.2.0",
     "recoil": "^0.0.8"
   }
 }

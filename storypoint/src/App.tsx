@@ -1,8 +1,10 @@
-import { EuiHeader, EuiHeaderLogo, EuiPage } from '@elastic/eui';
+import { EuiHeader, EuiPage } from '@elastic/eui';
 import React from 'react';
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 
 import CreateRoom from './components/create-room';
 import GlobalToast from './components/global-toast';
+import Logo from './components/logo';
 import SettingsMenu from './components/settings-menu';
 import { useConnectionWatcher } from './hooks/connection-watcher.hook';
 import { useTheme } from './hooks/theme.hook';
@@ -11,13 +13,27 @@ function App() {
   useTheme();
   useConnectionWatcher();
 
+  function AppRoutes() {
+    return (
+      <Switch>
+        <Route exact path="/">
+          <CreateRoom />
+        </Route>
+
+        <Route path="/:roomId">
+          <div>Hi</div>
+        </Route>
+      </Switch>
+    );
+  }
+
   return (
-    <>
+    <Router>
       <EuiHeader
         sections={[
           {
             items: [
-              <EuiHeaderLogo iconType="bullseye">StoryPoints</EuiHeaderLogo>,
+              <Logo />
             ],
             borders: 'right',
           },
@@ -32,9 +48,9 @@ function App() {
       <GlobalToast />
 
       <EuiPage style={{ padding: 40, minHeight: `calc(100vh - 49px)` }}>
-        <CreateRoom />
+        <AppRoutes />
       </EuiPage>
-    </>
+    </Router>
   );
 }
 

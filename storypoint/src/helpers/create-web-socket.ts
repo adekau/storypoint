@@ -2,9 +2,10 @@ export interface WebSocketEventCallbacks {
     onOpen?: (event: Event) => void;
     onError?: (error: Event) => void;
     onClose?: (event: CloseEvent) => void;
+    onMessage?: (event: MessageEvent) => void;
 };
 
-export function createWebSocket({ onOpen, onError, onClose }: WebSocketEventCallbacks): WebSocket {
+export function createWebSocket({ onOpen, onError, onClose, onMessage }: WebSocketEventCallbacks): WebSocket {
     const ws = new WebSocket('ws://localhost:8080/');
     ws.onerror = (error) => {
         if (onError)
@@ -22,7 +23,8 @@ export function createWebSocket({ onOpen, onError, onClose }: WebSocketEventCall
     };
 
     ws.onmessage = (msg) => {
-        console.log('Got Message', msg);
+        if (onMessage)
+            onMessage(msg);
     };
 
     return ws;
