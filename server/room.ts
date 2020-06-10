@@ -1,7 +1,11 @@
 import { v4 } from 'https://deno.land/std/uuid/mod.ts';
 import { isWebSocketCloseEvent, isWebSocketPingEvent, WebSocket } from 'https://deno.land/std/ws/mod.ts';
 
+import { addUserToRoom, removeUser, roomsMap, usersMap } from './data/data.ts';
+import { emitEvent } from './event.ts';
 import Logger from './logger.ts';
+import { IRoom } from './types/room.ts';
+import { IUser } from './types/user.ts';
 
 export default async function handle(ws: WebSocket) {
     const userId = v4.generate();
@@ -55,10 +59,17 @@ async function handleEvent({ ev, userId, ws }: { ev: any, userId: string, ws: We
 
         case 'create':
             const roomId = v4.generate();
-            roomsMap.set(roomId, []);
+            const room: IRoom = {
+                users: [],
+                roomName: ev.roomName,
+                id: roomId
+            };
+            roomsMap.set(roomId, room);
             const event = {
                 event: 'roomCreate',
-                roomId
+                roomId,
+                roomName: room.roomName,
+                users: room.users
             };
 
             Logger.log(`Room ${roomId} created.`);
