@@ -1,4 +1,4 @@
-import { IUser, IUserDetail } from './types/user.ts';
+import { IUser, IUserDetail } from '../shared/types/user.ts';
 
 export function translateUsers(users: Array<IUser>): Array<IUserDetail> {
     return users.map(user => ({

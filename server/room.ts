@@ -1,11 +1,12 @@
 import { v4 } from 'https://deno.land/std/uuid/mod.ts';
 import { isWebSocketCloseEvent, isWebSocketPingEvent, WebSocket } from 'https://deno.land/std/ws/mod.ts';
 
+import { IRoom } from '../shared/types/room.ts';
+import { StoryPointEvent } from '../shared/types/story-point-event.ts';
+import { IUser } from '../shared/types/user.ts';
 import { addUserToRoom, removeUser, roomsMap, usersMap } from './data/data.ts';
 import { emitEvent } from './event.ts';
 import Logger from './logger.ts';
-import { IRoom } from './types/room.ts';
-import { IUser } from './types/user.ts';
 
 export default async function handle(ws: WebSocket) {
     const userId = v4.generate();
@@ -42,21 +43,21 @@ export default async function handle(ws: WebSocket) {
     }
 }
 
-async function handleEvent({ ev, userId, ws }: { ev: any, userId: string, ws: WebSocket }): Promise<void> {
+async function handleEvent({ ev, userId, ws }: { ev: StoryPointEvent, userId: string, ws: WebSocket }): Promise<void> {
     switch (ev.event) {
         case 'join':
             const userJoin: IUser = {
-                roomId: ev.room,
+                roomId: ev.roomId,
                 websocket: ws,
                 userId: userId
             };
             usersMap.set(userId, userJoin);
-            await addUserToRoom(userJoin, ev.room);
+            await addUserToRoom(userJoin, ev.roomId);
             
             Logger.log(`User ${userJoin.userId} joined room ${userJoin.roomId}.`);
 
-            await emitEvent(ev.room);
-
+            await emitEvent(ev.roomId);
+            break;
         case 'create':
             const roomId = v4.generate();
             const room: IRoom = {
@@ -79,7 +80,7 @@ async function handleEvent({ ev, userId, ws }: { ev: any, userId: string, ws: We
             } catch (e) {
                 Logger.warn(`User ${userId} unable to be reached while creating room.`);
             }
-            
+            break;
         default:
             return;
     }

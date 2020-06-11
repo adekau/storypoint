@@ -15,6 +15,7 @@ import {
 } from '@elastic/eui';
 import React, { useState } from 'react';
 
+import { useWebSocketIsConnecting } from '../hooks/websocket-is-connecting';
 import { useWebSocket } from '../hooks/websocket.hook';
 
 export default function CreateRoom() {
@@ -22,6 +23,7 @@ export default function CreateRoom() {
     const [roomName, setRoomName] = useState('');
     const [nickname, setNickname] = useState('');
     const ws = useWebSocket();
+    const { connecting, error } = useWebSocketIsConnecting(ws);
 
     const create = () => {
         setLoading(true);
@@ -76,7 +78,8 @@ export default function CreateRoom() {
                         <EuiFlexGroup justifyContent="flexEnd">
                             <EuiFlexItem grow={false}>
                                 <EuiButton
-                                    isLoading={loading}
+                                    isLoading={loading || connecting}
+                                    disabled={!!error}
                                     type="submit"
                                     fill
                                     iconType="plusInCircleFilled"

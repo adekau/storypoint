@@ -2,6 +2,7 @@ import { Toast } from '@elastic/eui/src/components/toast/global_toast_list';
 import { useSetRecoilState } from 'recoil';
 
 import { toastsState } from '../atoms/toasts';
+import { useCallback } from 'react';
 
 type OptionalIdToast = Omit<Toast, 'id'> & Partial<Pick<Toast, 'id'>>;
 
@@ -11,7 +12,7 @@ export function useGlobalToast() {
     const setToasts = useSetRecoilState(toastsState);
     
     return {
-        addServerConnectionErrorToast: () => {
+        addServerConnectionErrorToast: useCallback(() => {
             setToasts(currentToasts => [
                 ...currentToasts,
                 {
@@ -22,7 +23,7 @@ export function useGlobalToast() {
                     color: 'danger'
                 }
             ]);
-        },
+        }, [setToasts]),
 
         addServerConnectedToast: () => {
             setToasts(currentToasts => [

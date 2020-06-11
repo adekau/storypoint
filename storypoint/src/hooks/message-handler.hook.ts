@@ -1,13 +1,15 @@
-import { StoryPointEvent } from '../types/story-point-event';
 import { useHistory } from 'react-router-dom';
-import { useRecoilState, useSetRecoilState } from 'recoil';
+import { useSetRecoilState } from 'recoil';
+
 import { roomState } from '../atoms/room';
+import { StoryPointEvent } from '../../../shared/types/story-point-event';
 
 export function useMessageHandler() {
     const history = useHistory();
     const setRoom = useSetRecoilState(roomState);
 
     return function (message: StoryPointEvent) {
+        console.log(message)
         switch (message.event) {
             case 'roomCreate':
                 history.push(`/${message.roomId}`);
@@ -16,6 +18,9 @@ export function useMessageHandler() {
                     users: message.users,
                     roomName: message.roomName,
                 });
+                break;
+            case 'userJoin':
+                setRoom(message.room);
                 break;
             default:
                 return;
