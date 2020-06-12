@@ -24,6 +24,15 @@ export default function Room() {
             };
             webSocket.send(JSON.stringify(event));
             
+            return () => {
+                if (webSocketStatus !== WebSocketStatus.Connected)
+                    return;
+                const event: StoryPointEvent = {
+                    event: 'leave',
+                    roomId
+                };
+                webSocket.send(JSON.stringify(event));
+            };
         },
         [webSocketStatus, webSocket, roomId]
     );

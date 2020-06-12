@@ -11,6 +11,9 @@ export type StoryPointEvent = {
     users: IUserDetail[];
     room: IRoom;
 } | {
+    event: 'leave';
+    roomId: string;
+} | {
     event: 'join';
     roomId: string;
 } | {

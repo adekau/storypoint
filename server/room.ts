@@ -58,6 +58,9 @@ async function handleEvent({ ev, userId, ws }: { ev: StoryPointEvent, userId: st
 
             await emitEvent(ev.roomId);
             break;
+        case 'leave':
+            await removeUser(userId);
+            break;
         case 'create':
             const roomId = v4.generate();
             const room: IRoom = {
