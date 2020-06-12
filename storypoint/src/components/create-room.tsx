@@ -12,22 +12,30 @@ import {
     EuiPageContentHeaderSection,
     EuiSpacer,
     EuiTitle,
+    EuiToolTip,
 } from '@elastic/eui';
 import React, { useState } from 'react';
+import { useRecoilValue } from 'recoil';
 
-import { useWebSocketIsConnecting } from '../hooks/websocket-is-connecting';
+import { onlineState } from '../atoms/online';
+import { WebSocketStatus } from '../atoms/websocketStatus';
 import { useWebSocket } from '../hooks/websocket.hook';
 
 export default function CreateRoom() {
     const [loading, setLoading] = useState(false);
+    const online = useRecoilValue(onlineState);
     const [roomName, setRoomName] = useState('');
     const [nickname, setNickname] = useState('');
-    const ws = useWebSocket();
-    const { connecting, error } = useWebSocketIsConnecting(ws);
+    const { webSocket, webSocketStatus } = useWebSocket();
+    const isDisabled = (webSocketStatus < WebSocketStatus.Connecting) || !online;
+    const isLoading = loading || webSocketStatus === WebSocketStatus.Connecting;
 
     const create = () => {
+        if (webSocketStatus !== WebSocketStatus.Connected)
+            return;
+
         setLoading(true);
-        ws?.send(JSON.stringify({
+        webSocket.send(JSON.stringify({
             event: 'create',
             roomName,
             nickname
@@ -77,15 +85,17 @@ export default function CreateRoom() {
 
                         <EuiFlexGroup justifyContent="flexEnd">
                             <EuiFlexItem grow={false}>
-                                <EuiButton
-                                    isLoading={loading || connecting}
-                                    disabled={!!error}
-                                    type="submit"
-                                    fill
-                                    iconType="plusInCircleFilled"
-                                    onClick={create}>
-                                    Create
-                                        </EuiButton>
+                                <EuiToolTip
+                                    content={ isDisabled ? <p>Unable to contact server.</p> : <p>Create Room</p>}>
+                                    <EuiButton
+                                        isLoading={isLoading}
+                                        disabled={isDisabled}
+                                        fill
+                                        iconType="plusInCircleFilled"
+                                        onClick={create}>
+                                        Create
+                                </EuiButton>
+                                </EuiToolTip>
                             </EuiFlexItem>
                         </EuiFlexGroup>
                     </EuiForm>

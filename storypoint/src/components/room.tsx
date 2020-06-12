@@ -6,26 +6,26 @@ import { useRecoilValue } from 'recoil';
 
 import { StoryPointEvent } from '../../../shared/types/story-point-event';
 import { roomState } from '../atoms/room';
-import { useWebSocketIsConnecting } from '../hooks/websocket-is-connecting';
+import { WebSocketStatus } from '../atoms/websocketStatus';
 import { useWebSocket } from '../hooks/websocket.hook';
 
 export default function Room() {
     const { roomId } = useParams();
     const room = useRecoilValue(roomState);
-    const ws = useWebSocket();
-    const { connecting } = useWebSocketIsConnecting(ws);
+    const { webSocket, webSocketStatus } = useWebSocket();
 
     useEffect(
         () => {
-            if (!connecting) {
-                const event: StoryPointEvent = {
-                    event: 'join',
-                    roomId
-                };
-                ws.send(JSON.stringify(event));
-            }
+            if (webSocketStatus !== WebSocketStatus.Connected)
+                return;
+            const event: StoryPointEvent = {
+                event: 'join',
+                roomId
+            };
+            webSocket.send(JSON.stringify(event));
+            
         },
-        [connecting, ws, roomId]
+        [webSocketStatus, webSocket, roomId]
     );
 
     return (
@@ -33,7 +33,7 @@ export default function Room() {
             <EuiText>
                 <h2>Welcome to room {room?.roomName}</h2>
 
-                <span>Users: {room?.users.map((user: any) => <p>{user.userId}</p>)}</span>
+                <span>Users: {room?.users.map((user: any) => <p key={user.userId}>{user.userId}</p>)}</span>
             </EuiText>
         </>
     );
