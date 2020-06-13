@@ -22,6 +22,12 @@ export function useMessageHandler() {
             case 'userJoin':
                 setRoom(message.room);
                 break;
+            case 'userLeave':
+                setRoom(message.room);
+                break;
+            case 'left':
+                setRoom(null);
+                break;
             default:
                 return;
         }

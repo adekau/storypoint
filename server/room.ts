@@ -3,7 +3,7 @@ import { isWebSocketCloseEvent, isWebSocketPingEvent, WebSocket } from 'https://
 
 import { StoryPointEvent } from '../shared/types/story-point-event.ts';
 import { removeUser } from './data/data.ts';
-import { createRoomEvent, userJoinEvent } from './event.ts';
+import { createRoomEvent, joinEvent, leaveEvent } from './event.ts';
 import Logger from './logger.ts';
 
 export type HandleEventArguments = { ev: StoryPointEvent, userId: string, ws: WebSocket };
@@ -43,13 +43,13 @@ export default async function handle(ws: WebSocket) {
     }
 }
 
-async function handleEvent({ ev, userId }: HandleEventArguments): Promise<void> {
+async function handleEvent({ ev }: HandleEventArguments): Promise<void> {
     switch (ev.event) {
         case 'join':
-            await userJoinEvent(arguments[0]);
+            await joinEvent(arguments[0]);
             break;
         case 'leave':
-            await removeUser(userId);
+            await leaveEvent(arguments[0]);
             break;
         case 'create':
             await createRoomEvent(arguments[0]);

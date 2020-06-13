@@ -8,17 +8,8 @@ import Logger from './logger.ts';
 import { HandleEventArguments } from './room.ts';
 import { translateUsers } from './translation.ts';
 
-export async function emitEvent(roomId: string) {
-    const room = roomsMap.get(roomId);
-    const users = room?.users ?? [];
-
+export async function emitEvent(users: IUser[], event: StoryPointEvent) {
     for (const user of users) {
-        const event: StoryPointEvent = {
-            event: 'userJoin',
-            users: translateUsers(users),
-            room: room!
-        }
-
         try {
             user.websocket.send(JSON.stringify(event));
         } catch (e) {
@@ -29,7 +20,7 @@ export async function emitEvent(roomId: string) {
     }
 }
 
-export async function userJoinEvent({ ev, userId, ws }: HandleEventArguments): Promise<void> {
+export async function joinEvent({ ev, userId, ws }: HandleEventArguments): Promise<void> {
     if (ev.event !== 'join')
         return;
 
@@ -43,7 +34,27 @@ export async function userJoinEvent({ ev, userId, ws }: HandleEventArguments): P
     
     Logger.log(`User ${userJoin.userId} joined room ${userJoin.roomId}.`);
 
-    await emitEvent(ev.roomId);
+    const room = roomsMap.get(ev.roomId);
+    const users = room?.users ?? [];
+    const event: StoryPointEvent = {
+        event: 'userJoin',
+        users: translateUsers(users),
+        room: room!
+    };
+
+    await emitEvent(users, event);
+}
+
+export async function leaveEvent({ ev, userId, ws }: HandleEventArguments): Promise<void> {
+    if (ev.event !== 'leave')
+        return;
+    await removeUser(userId);
+    const event: StoryPointEvent = {
+        event: 'left'
+    };
+    try {
+        ws.send(JSON.stringify(event));
+    } catch (e) { }
 }
 
 export async function createRoomEvent({ ev, userId, ws }: HandleEventArguments): Promise<void> {

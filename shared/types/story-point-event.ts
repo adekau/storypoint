@@ -11,6 +11,12 @@ export type StoryPointEvent = {
     users: IUserDetail[];
     room: IRoom;
 } | {
+    event: 'userLeave';
+    users: IUserDetail[];
+    room: IRoom;
+} | {
+    event: 'left'
+} | {
     event: 'leave';
     roomId: string;
 } | {

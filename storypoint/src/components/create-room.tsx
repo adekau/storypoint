@@ -27,8 +27,8 @@ export default function CreateRoom() {
     const [roomName, setRoomName] = useState('');
     const [nickname, setNickname] = useState('');
     const { webSocket, webSocketStatus } = useWebSocket();
-    const isDisabled = (webSocketStatus < WebSocketStatus.Connecting) || !online;
     const isLoading = loading || webSocketStatus === WebSocketStatus.Connecting;
+    const isDisabled = (webSocketStatus <= WebSocketStatus.Connecting) || !online;
 
     const create = () => {
         if (webSocketStatus !== WebSocketStatus.Connected)
