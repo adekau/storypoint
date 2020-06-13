@@ -14,7 +14,7 @@ import {
     EuiTitle,
     EuiToolTip,
 } from '@elastic/eui';
-import React, { useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 
 import { onlineState } from '../atoms/online';
@@ -23,6 +23,8 @@ import { useWebSocket } from '../hooks/websocket.hook';
 
 export default function CreateRoom() {
     const [loading, setLoading] = useState(false);
+    const [errors, setErrors] = useState<string[]>([]);
+    const [showErrors, setShowErrors] = useState(false);
     const online = useRecoilValue(onlineState);
     const [roomName, setRoomName] = useState('');
     const [nickname, setNickname] = useState('');
@@ -30,9 +32,19 @@ export default function CreateRoom() {
     const isLoading = loading || webSocketStatus === WebSocketStatus.Connecting;
     const isDisabled = (webSocketStatus <= WebSocketStatus.Connecting) || !online;
 
+    const roomNameErrors = useMemo(() => !roomName ? ['Room Name is required.'] : [], [roomName]);
+    const nicknameErrors = useMemo(() => !nickname ? ['Nickname is required.'] : [], [nickname]);
+    useEffect(() => {
+        setErrors([...roomNameErrors, ...nicknameErrors]);
+    }, [roomNameErrors, nicknameErrors, setErrors]);
+
     const create = () => {
         if (webSocketStatus !== WebSocketStatus.Connected)
             return;
+        if (errors.length) {
+            setShowErrors(true);
+            return;
+        }
 
         setLoading(true);
         webSocket.send(JSON.stringify({
@@ -58,8 +70,8 @@ export default function CreateRoom() {
                     </EuiPageContentHeaderSection>
                 </EuiPageContentHeader>
                 <EuiPageContentBody>
-                    <EuiForm component="form">
-                        <EuiFormRow label="Room Name">
+                    <EuiForm component="form" isInvalid={showErrors && !!errors.length} error={errors}>
+                        <EuiFormRow label="Room Name" isInvalid={!!roomNameErrors.length} error={roomNameErrors}>
                             <EuiFieldText
                                 placeholder="Room Name"
                                 id="roomName"
@@ -71,7 +83,7 @@ export default function CreateRoom() {
 
                         <EuiSpacer size="m" />
 
-                        <EuiFormRow label="Nickname" helpText="Your display name once in the room.">
+                        <EuiFormRow label="Nickname" helpText="Your display name once in the room." isInvalid={!!nicknameErrors.length} error={nicknameErrors}>
                             <EuiFieldText
                                 placeholder="Nickname"
                                 id="nickname"
@@ -86,7 +98,7 @@ export default function CreateRoom() {
                         <EuiFlexGroup justifyContent="flexEnd">
                             <EuiFlexItem grow={false}>
                                 <EuiToolTip
-                                    content={ isDisabled ? <p>Unable to contact server.</p> : <p>Create Room</p>}>
+                                    content={isDisabled ? <p>Unable to contact server.</p> : <p>Create Room</p>}>
                                     <EuiButton
                                         isLoading={isLoading}
                                         disabled={isDisabled}
