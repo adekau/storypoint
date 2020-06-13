@@ -14,7 +14,7 @@ export function useMessageHandler() {
             case 'roomCreate':
                 history.push(`/${message.roomId}`);
                 setRoom({
-                    roomId: message.roomId,
+                    id: message.roomId,
                     users: message.users,
                     roomName: message.roomName,
                 });

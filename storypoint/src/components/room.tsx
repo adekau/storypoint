@@ -1,4 +1,12 @@
-import { EuiText } from '@elastic/eui';
+import {
+    EuiCard,
+    EuiLoadingSpinner,
+    EuiPageBody,
+    EuiPageContent,
+    EuiPageHeader,
+    EuiPageHeaderSection,
+    EuiTitle,
+} from '@elastic/eui';
 import React from 'react';
 import { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
@@ -23,7 +31,7 @@ export default function Room() {
                 roomId
             };
             webSocket.send(JSON.stringify(event));
-            
+
             return () => {
                 if (webSocketStatus !== WebSocketStatus.Connected)
                     return;
@@ -38,12 +46,17 @@ export default function Room() {
     );
 
     return (
-        <>
-            <EuiText>
-                <h2>Welcome to room {room?.roomName}</h2>
-
-                <span>Users: {room?.users.map((user: any) => <p key={user.userId}>{user.userId}</p>)}</span>
-            </EuiText>
-        </>
+        <EuiPageBody component="div">
+            <EuiPageHeader>
+                <EuiPageHeaderSection>
+                    <EuiTitle size='m'>
+                        <h1>{room?.roomName ?? <EuiLoadingSpinner size='l' />}</h1>
+                    </EuiTitle>
+                </EuiPageHeaderSection>
+            </EuiPageHeader>
+            <EuiPageContent grow={true} panelPaddingSize="l" hasShadow>
+                <EuiCard title={'Hello'} description={'World'} />
+            </EuiPageContent>
+        </EuiPageBody>
     );
 }
