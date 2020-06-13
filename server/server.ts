@@ -14,6 +14,6 @@ for await (const req of server) {
             headers: req.headers
         });
 
-        handle(ws);
+        await handle(ws);
     }
 }
