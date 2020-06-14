@@ -3,6 +3,7 @@ import {
     EuiFieldText,
     EuiFlexGroup,
     EuiFlexItem,
+    EuiFocusTrap,
     EuiForm,
     EuiFormRow,
     EuiPageBody,
@@ -38,13 +39,15 @@ export default function CreateRoom() {
         setErrors([...roomNameErrors, ...nicknameErrors]);
     }, [roomNameErrors, nicknameErrors, setErrors]);
 
-    const create = () => {
+    const create = (event?: React.MouseEvent<HTMLButtonElement, MouseEvent> | React.FormEvent<HTMLFormElement>) => {
         if (webSocketStatus !== WebSocketStatus.Connected)
             return;
         if (errors.length) {
             setShowErrors(true);
             return;
         }
+        if (event)
+            event.preventDefault();
 
         setLoading(true);
         webSocket.send(JSON.stringify({
@@ -70,47 +73,51 @@ export default function CreateRoom() {
                     </EuiPageContentHeaderSection>
                 </EuiPageContentHeader>
                 <EuiPageContentBody>
-                    <EuiForm component="form" isInvalid={showErrors && !!errors.length} error={errors}>
-                        <EuiFormRow label="Room Name" isInvalid={!!roomNameErrors.length} error={roomNameErrors}>
-                            <EuiFieldText
-                                placeholder="Room Name"
-                                id="roomName"
-                                value={roomName}
-                                onChange={name => setRoomName(name.target.value)}
-                                required
-                            />
-                        </EuiFormRow>
+                    <EuiFocusTrap>
+                        <EuiForm component="form" isInvalid={showErrors && !!errors.length} error={errors} onSubmit={create} action=''>
+                            <EuiFormRow label="Room Name" isInvalid={!!roomNameErrors.length} error={roomNameErrors}>
+                                <EuiFieldText
+                                    placeholder="Room Name"
+                                    id="roomName"
+                                    value={roomName}
+                                    tabIndex={0}
+                                    onChange={name => setRoomName(name.target.value)}
+                                    required
+                                />
+                            </EuiFormRow>
 
-                        <EuiSpacer size="m" />
+                            <EuiSpacer size="m" />
 
-                        <EuiFormRow label="Nickname" helpText="Your display name once in the room." isInvalid={!!nicknameErrors.length} error={nicknameErrors}>
-                            <EuiFieldText
-                                placeholder="Nickname"
-                                id="nickname"
-                                value={nickname}
-                                onChange={nick => setNickname(nick.target.value)}
-                                required
-                            />
-                        </EuiFormRow>
+                            <EuiFormRow label="Nickname" helpText="Your display name once in the room." isInvalid={!!nicknameErrors.length} error={nicknameErrors}>
+                                <EuiFieldText
+                                    placeholder="Nickname"
+                                    id="nickname"
+                                    value={nickname}
+                                    onChange={nick => setNickname(nick.target.value)}
+                                    required
+                                />
+                            </EuiFormRow>
 
-                        <EuiSpacer size="m" />
+                            <EuiSpacer size="m" />
 
-                        <EuiFlexGroup justifyContent="flexEnd">
-                            <EuiFlexItem grow={false}>
-                                <EuiToolTip
-                                    content={isDisabled ? <p>Unable to contact server.</p> : <p>Create Room</p>}>
-                                    <EuiButton
-                                        isLoading={isLoading}
-                                        disabled={isDisabled}
-                                        fill
-                                        iconType="plusInCircleFilled"
-                                        onClick={create}>
-                                        Create
+                            <EuiFlexGroup justifyContent="flexEnd">
+                                <EuiFlexItem grow={false}>
+                                    <EuiToolTip
+                                        content={isDisabled ? <p>Unable to contact server.</p> : <p>Create Room</p>}>
+                                        <EuiButton
+                                            isLoading={isLoading}
+                                            disabled={isDisabled}
+                                            type="submit"
+                                            fill
+                                            iconType="plusInCircleFilled"
+                                            onClick={create}>
+                                            Create
                                 </EuiButton>
-                                </EuiToolTip>
-                            </EuiFlexItem>
-                        </EuiFlexGroup>
-                    </EuiForm>
+                                    </EuiToolTip>
+                                </EuiFlexItem>
+                            </EuiFlexGroup>
+                        </EuiForm>
+                    </EuiFocusTrap>
                 </EuiPageContentBody>
             </EuiPageContent>
         </EuiPageBody>
