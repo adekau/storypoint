@@ -1,4 +1,4 @@
-import { EuiHeader, EuiPage } from '@elastic/eui';
+import { EuiHeader } from '@elastic/eui';
 import React from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 
@@ -47,10 +47,7 @@ function App() {
         ]} />
 
       <GlobalToast />
-
-      <EuiPage style={{ padding: 40, minHeight: `calc(100vh - 49px)` }}>
-        <AppRoutes />
-      </EuiPage>
+      <AppRoutes />
     </Router>
   );
 }

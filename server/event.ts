@@ -27,7 +27,8 @@ export async function joinEvent({ ev, userId, ws }: HandleEventArguments): Promi
     const userJoin: IUser = {
         roomId: ev.roomId,
         websocket: ws,
-        userId: userId
+        userId: userId,
+        nickname: ev.nickname
     };
     usersMap.set(userId, userJoin);
     await addUserToRoom(userJoin, ev.roomId);

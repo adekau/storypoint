@@ -22,6 +22,7 @@ export type StoryPointEvent = {
 } | {
     event: 'join';
     roomId: string;
+    nickname: string;
 } | {
     event: 'create';
     roomName: string;

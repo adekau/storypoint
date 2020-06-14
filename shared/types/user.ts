@@ -4,11 +4,11 @@ export interface IUser {
     roomId: string;
     userId: string;
     websocket: WebSocket;
-    name?: string;
+    nickname: string;
 }
 
 export interface IUserDetail {
     roomId: string;
     userId: string;
-    name?: string;
+    nickname: string;
 }
