@@ -1,4 +1,4 @@
-import { EuiCard, EuiAvatar, EuiText } from '@elastic/eui';
+import { EuiAvatar, EuiCard } from '@elastic/eui';
 import React from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 
@@ -32,7 +32,9 @@ export function VoteCard(props: VoteCardProps) {
             }}
             icon={<EuiAvatar size="xl" name={props.user.nickname || '?'} />}
             title={props.user.nickname || 'Anonymous'}
-            description={<EuiText>Vote:  <strong>{vote.toString() ?? ''}</strong></EuiText>}
+            description={
+                <span>Vote: <strong>{vote.toString() ?? ''}</strong></span>
+            }
         />
     );
 }

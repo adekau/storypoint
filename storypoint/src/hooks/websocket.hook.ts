@@ -8,6 +8,8 @@ import { createWebSocket } from '../helpers/create-web-socket';
 import { useGlobalToast } from './global-toast.hook';
 import { useMessageHandler } from './message-handler.hook';
 
+let initialized = false;
+
 export function useWebSocket() {
     const [webSocket, setWebSocket] = useRecoilState(webSocketState);
     const [webSocketStatus, setWebSocketStatus] = useRecoilState(webSocketStatusState);
@@ -20,11 +22,15 @@ export function useWebSocket() {
             const setNewWebSocket = (showOnlineToast?: boolean) => {
                 setWebSocketStatus(WebSocketStatus.Connecting);
 
-                setWebSocket(createWebSocket({
-                    onOpen: () => {
-                        setWebSocketStatus(WebSocketStatus.Connected);
-                        if (showOnlineToast) 
-                            addServerConnectedToast();
+                createWebSocket({
+                    onOpen: (event) => {
+                        const ws = event.currentTarget as WebSocket;
+                        if (ws.readyState === 1) {
+                            setWebSocket(ws);
+                            setWebSocketStatus(WebSocketStatus.Connected);
+                            if (showOnlineToast) 
+                                addServerConnectedToast();
+                        }
                     },
                     onError: (e) => {
                         setWebSocketStatus(WebSocketStatus.Errored);
@@ -32,9 +38,9 @@ export function useWebSocket() {
                     },
                     onClose: (event) => {
                         const ws = event.currentTarget as WebSocket;
-                        setWebSocketStatus(WebSocketStatus.Closed);
-
+                        
                         if (ws.readyState === 3) {
+                            setWebSocketStatus(WebSocketStatus.Closed);
                             addServerConnectionErrorToast();
                             setTimeout(() => setNewWebSocket(true), 10000);
                         }
@@ -44,11 +50,13 @@ export function useWebSocket() {
                         if (data)
                             handleMessageEvent(data);
                     }
-                }));
+                });
             }
 
-            if (!webSocket)
+            if (!initialized) {
                 setNewWebSocket();
+                initialized = true;
+            }
         },
         [
             addServerConnectedToast,

@@ -1,6 +1,10 @@
-import { EuiFlexGroup, EuiFlexItem, EuiPanel, EuiButton } from '@elastic/eui';
+import { EuiButton, EuiFlexGroup, EuiFlexItem, EuiPanel } from '@elastic/eui';
 import React, { useState } from 'react';
+import { useRecoilValue } from 'recoil';
 
+import { onlineState } from '../atoms/online';
+import { WebSocketStatus } from '../atoms/websocketStatus';
+import { useWebSocket } from '../hooks/websocket.hook';
 import { VoteCastCard } from './vote-cast-card';
 
 export interface VoteCastProps {
@@ -9,6 +13,11 @@ export interface VoteCastProps {
 
 export function VoteCast(props: VoteCastProps) {
     const [selected, setSelected] = useState<number | null>(null);
+    const { webSocketStatus } = useWebSocket();
+    const online = useRecoilValue(onlineState);
+    const isLoading = webSocketStatus === WebSocketStatus.Connecting;
+    const isDisabled = (webSocketStatus <= WebSocketStatus.Connecting) || !online;
+
     return (
         <EuiPanel betaBadgeTitle={'Vote'} betaBadgeLabel={'Vote'} paddingSize="l">
             <EuiFlexGroup direction="column" gutterSize="l">
@@ -21,7 +30,11 @@ export function VoteCast(props: VoteCastProps) {
                 <EuiFlexItem>
                     <EuiFlexGroup justifyContent="center">
                         <EuiFlexItem grow={false}>
-                            <EuiButton>Cast Vote</EuiButton>
+                            <EuiButton
+                                disabled={isDisabled}
+                                isLoading={isLoading}>
+                                Cast Vote
+                            </EuiButton>
                         </EuiFlexItem>
                     </EuiFlexGroup>
                 </EuiFlexItem>

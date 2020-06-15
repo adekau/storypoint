@@ -19,6 +19,7 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 
 import { StoryPointEvent } from '../../../shared/types/story-point-event';
 import { nicknameState } from '../atoms/nickname';
+import { onlineState } from '../atoms/online';
 import { roomState } from '../atoms/room';
 import { WebSocketStatus } from '../atoms/websocketStatus';
 import { useWebSocket } from '../hooks/websocket.hook';
@@ -31,11 +32,15 @@ export default function Room() {
     const [nicknameField, setNicknameField] = useState(nickname);
     const room = useRecoilValue(roomState);
     const { webSocket, webSocketStatus } = useWebSocket();
+    const online = useRecoilValue(onlineState);
+    const isLoading = webSocketStatus === WebSocketStatus.Connecting;
+    const isDisabled = (webSocketStatus <= WebSocketStatus.Connecting) || !online;
 
     useEffect(
         () => {
+            console.log(webSocketStatus, webSocket);
             if (webSocketStatus !== WebSocketStatus.Connected)
-                return;
+                    return;
             const event: StoryPointEvent = {
                 event: 'join',
                 roomId,
@@ -80,6 +85,8 @@ export default function Room() {
                                 <EuiFlexItem>
                                     <EuiFormRow hasEmptyLabelSpace>
                                         <EuiButton
+                                            disabled={isDisabled}
+                                            isLoading={isLoading}
                                             onClick={() => setNickname(nicknameField)}>
                                             Change
                                         </EuiButton>
