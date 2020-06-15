@@ -35,8 +35,8 @@ export default function CreateRoom() {
     const isLoading = loading || webSocketStatus === WebSocketStatus.Connecting;
     const isDisabled = (webSocketStatus <= WebSocketStatus.Connecting) || !online;
 
-    const roomNameErrors = useMemo(() => !roomName ? ['Room Name is required.'] : [], [roomName]);
-    const nicknameErrors = useMemo(() => !nickname ? ['Nickname is required.'] : [], [nickname]);
+    const roomNameErrors = useMemo(() => !roomName ? ['Room Name is required'] : [], [roomName]);
+    const nicknameErrors = useMemo(() => !nickname ? ['Nickname is required'] : [], [nickname]);
     useEffect(() => {
         setErrors([...roomNameErrors, ...nicknameErrors]);
     }, [roomNameErrors, nicknameErrors, setErrors]);
@@ -71,7 +71,7 @@ export default function CreateRoom() {
                     <EuiPageContentHeader>
                         <EuiPageContentHeaderSection>
                             <EuiTitle>
-                                <h2>Create a New Story Pointing Room</h2>
+                                <h2>Create a new story pointing room</h2>
                             </EuiTitle>
                         </EuiPageContentHeaderSection>
                     </EuiPageContentHeader>
@@ -91,7 +91,7 @@ export default function CreateRoom() {
 
                                 <EuiSpacer size="m" />
 
-                                <EuiFormRow label="Nickname" helpText="Your display name once in the room." isInvalid={!!nicknameErrors.length} error={nicknameErrors}>
+                                <EuiFormRow label="Nickname" helpText="Your display name once in the room" isInvalid={!!nicknameErrors.length} error={nicknameErrors}>
                                     <EuiFieldText
                                         placeholder="Nickname"
                                         id="nickname"

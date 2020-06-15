@@ -1,23 +1,38 @@
-import React, { useMemo, useState } from 'react';
-import { useRecoilState } from 'recoil';
+import { EuiCard, EuiAvatar, EuiText } from '@elastic/eui';
+import React from 'react';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { IUserDetail } from '../../../shared/types/user';
+import { selectedVoteCardsState } from '../atoms/selected-vote-cards';
 import { voteCardState } from '../atoms/vote-card';
-import { EuiCard } from '@elastic/eui';
+import { isSelectedSelector } from '../selectors/is-selected';
 
 export interface VoteCardProps {
     user: IUserDetail;
 }
 
 export function VoteCard(props: VoteCardProps) {
-    const [isSelected, setIsSelected] = useState(false);
-    const [vote, setVote] = useRecoilState(voteCardState(props.user.userId))
+    const vote = useRecoilValue(voteCardState(props.user.userId));
+    const setSelectedVoteCards = useSetRecoilState(selectedVoteCardsState);
+    const isSelected = useRecoilValue(isSelectedSelector(props.user.userId));
 
     const cardClick = () => {
-        setIsSelected(!isSelected);
+        if (!isSelected)
+            setSelectedVoteCards(current => [...current, props.user.userId]);
+        else
+            setSelectedVoteCards(current => current.filter(val => val !== props.user.userId));
     };
 
     return (
-        <EuiCard selectable={{ isSelected, onClick: cardClick }} title={props.user.nickname} description={vote.toString() ?? ''} />
+        <EuiCard
+            layout="horizontal"
+            selectable={{
+                isSelected,
+                onClick: cardClick
+            }}
+            icon={<EuiAvatar size="xl" name={props.user.nickname || '?'} />}
+            title={props.user.nickname || 'Anonymous'}
+            description={<EuiText>Vote:  <strong>{vote.toString() ?? ''}</strong></EuiText>}
+        />
     );
 }

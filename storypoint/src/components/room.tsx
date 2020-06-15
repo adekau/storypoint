@@ -1,5 +1,5 @@
 import {
-    EuiCard,
+    EuiButton,
     EuiFieldText,
     EuiFlexGroup,
     EuiFlexItem,
@@ -11,7 +11,6 @@ import {
     EuiPageHeader,
     EuiPageHeaderSection,
     EuiTitle,
-    EuiButton,
 } from '@elastic/eui';
 import React, { useState } from 'react';
 import { useEffect } from 'react';
@@ -24,6 +23,7 @@ import { roomState } from '../atoms/room';
 import { WebSocketStatus } from '../atoms/websocketStatus';
 import { useWebSocket } from '../hooks/websocket.hook';
 import { VoteCard } from './vote-card';
+import { VoteCast } from './vote-cast';
 
 export default function Room() {
     const { roomId } = useParams();
@@ -67,8 +67,8 @@ export default function Room() {
                     </EuiPageHeaderSection>
                 </EuiPageHeader>
                 <EuiPageContent grow={true} panelPaddingSize="l" hasShadow>
-                    <EuiFlexGroup gutterSize="l" direction="column" alignItems="center">
-                        <EuiFlexItem>
+                    <EuiFlexGroup gutterSize="l" direction="column" alignItems="center" justifyContent="spaceBetween" style={{ height: '100%' }}>
+                        <EuiFlexItem grow={false}>
                             <EuiFlexGroup>
                                 <EuiFlexItem>
                                     <EuiFormRow label="Nickname">
@@ -88,16 +88,19 @@ export default function Room() {
                             </EuiFlexGroup>
                         </EuiFlexItem>
 
-                        <EuiFlexItem>
-                            <EuiFlexGroup gutterSize="l">
-                                {room?.users.map(user => {
+                        <EuiFlexItem grow={false}>
+                            <EuiFlexGroup gutterSize="l" wrap={true}>
+                                {(room?.users ?? []).map(user => {
                                     return (
-                                        <EuiFlexItem key={user.userId} style={{ width: 140 }}>
+                                        <EuiFlexItem grow={false} key={user.userId} style={{ minWidth: 140 }}>
                                             <VoteCard user={user} />
                                         </EuiFlexItem>
                                     );
                                 })}
                             </EuiFlexGroup>
+                        </EuiFlexItem>
+                        <EuiFlexItem grow={false}>
+                            <VoteCast options={[0, 0.5, 1, 2, 3, 5, 8, 13]} />
                         </EuiFlexItem>
                     </EuiFlexGroup>
                 </EuiPageContent>
