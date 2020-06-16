@@ -11,45 +11,46 @@ import { useConnectionWatcher } from './hooks/connection-watcher.hook';
 import { useTheme } from './hooks/theme.hook';
 
 function App() {
-  useTheme();
-  useConnectionWatcher();
+    useTheme();
+    useConnectionWatcher();
 
-  function AppRoutes() {
+    function AppRoutes() {
+        return (
+            <Switch>
+                <Route exact path="/">
+                    <CreateRoom />
+                </Route>
+
+                <Route path="/:roomId">
+                    <Room />
+                </Route>
+            </Switch>
+        );
+    }
+
     return (
-      <Switch>
-        <Route exact path="/">
-          <CreateRoom />
-        </Route>
-
-        <Route path="/:roomId">
-          <Room />
-        </Route>
-      </Switch>
+        <Router>
+            <div className={'mainGrid'}>
+                <EuiHeader
+                    sections={[
+                        {
+                            items: [
+                                <Logo />
+                            ],
+                            borders: 'right',
+                        },
+                        {
+                            items: [
+                                <SettingsMenu />
+                            ],
+                            borders: 'left'
+                        }
+                    ]} />
+                <AppRoutes />
+                <GlobalToast />
+            </div>
+        </Router>
     );
-  }
-
-  return (
-    <Router>
-      <EuiHeader
-        sections={[
-          {
-            items: [
-              <Logo />
-            ],
-            borders: 'right',
-          },
-          {
-            items: [
-              <SettingsMenu />
-            ],
-            borders: 'left'
-          }
-        ]} />
-
-      <GlobalToast />
-      <AppRoutes />
-    </Router>
-  );
 }
 
 export default App;

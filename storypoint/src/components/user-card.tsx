@@ -11,7 +11,7 @@ export interface VoteCardProps {
     user: IUserDetail;
 }
 
-export function VoteCard(props: VoteCardProps) {
+export function UserCard(props: VoteCardProps) {
     const vote = useRecoilValue(voteCardState(props.user.userId));
     const setSelectedVoteCards = useSetRecoilState(selectedVoteCardsState);
     const isSelected = useRecoilValue(isSelectedSelector(props.user.userId));

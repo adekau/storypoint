@@ -11,6 +11,7 @@ import {
     EuiPageHeader,
     EuiPageHeaderSection,
     EuiTitle,
+    EuiFlexGrid,
 } from '@elastic/eui';
 import React, { useState } from 'react';
 import { useEffect } from 'react';
@@ -21,15 +22,18 @@ import { StoryPointEvent } from '../../../shared/types/story-point-event';
 import { nicknameState } from '../atoms/nickname';
 import { onlineState } from '../atoms/online';
 import { roomState } from '../atoms/room';
+import { selectedVoteCardsState } from '../atoms/selected-vote-cards';
 import { WebSocketStatus } from '../atoms/websocketStatus';
 import { useWebSocket } from '../hooks/websocket.hook';
-import { VoteCard } from './vote-card';
+import { BottomBar } from './bottom-bar';
+import { UserCard } from './user-card';
 import { VoteCast } from './vote-cast';
 
 export default function Room() {
     const { roomId } = useParams();
     const [nickname, setNickname] = useRecoilState(nicknameState);
     const [nicknameField, setNicknameField] = useState(nickname);
+    const selectedCards = useRecoilValue(selectedVoteCardsState);
     const room = useRecoilValue(roomState);
     const { webSocket, webSocketStatus } = useWebSocket();
     const online = useRecoilValue(onlineState);
@@ -38,9 +42,8 @@ export default function Room() {
 
     useEffect(
         () => {
-            console.log(webSocketStatus, webSocket);
             if (webSocketStatus !== WebSocketStatus.Connected)
-                    return;
+                return;
             const event: StoryPointEvent = {
                 event: 'join',
                 roomId,
@@ -62,56 +65,63 @@ export default function Room() {
     );
 
     return (
-        <EuiPage style={{ padding: 40, minHeight: `calc(100vh - 49px)` }} restrictWidth={1650}>
-            <EuiPageBody component="div">
-                <EuiPageHeader>
-                    <EuiPageHeaderSection>
-                        <EuiTitle size='m'>
-                            <h1>{room?.roomName ?? <EuiLoadingSpinner size='l' />}</h1>
-                        </EuiTitle>
-                    </EuiPageHeaderSection>
-                </EuiPageHeader>
-                <EuiPageContent grow={true} panelPaddingSize="l" hasShadow>
-                    <EuiFlexGroup gutterSize="l" direction="column" alignItems="center" justifyContent="spaceBetween" style={{ height: '100%' }}>
-                        <EuiFlexItem grow={false}>
-                            <EuiFlexGroup>
-                                <EuiFlexItem>
-                                    <EuiFormRow label="Nickname">
-                                        <EuiFieldText
-                                            value={nicknameField}
-                                            onChange={(change) => setNicknameField(change.target.value)}></EuiFieldText>
-                                    </EuiFormRow>
-                                </EuiFlexItem>
-                                <EuiFlexItem>
-                                    <EuiFormRow hasEmptyLabelSpace>
-                                        <EuiButton
-                                            disabled={isDisabled}
-                                            isLoading={isLoading}
-                                            onClick={() => setNickname(nicknameField)}>
-                                            Change
+        <>
+            <EuiPage
+                className={selectedCards.length ? 'bottomBar--open' : 'bottomBar--closed'}
+                style={{ padding: 40 }}
+                restrictWidth={1650}>
+                <EuiPageBody component="div">
+                    <EuiPageHeader>
+                        <EuiPageHeaderSection>
+                            <EuiTitle size='m'>
+                                <h1>{room?.roomName ?? <EuiLoadingSpinner size='l' />}</h1>
+                            </EuiTitle>
+                        </EuiPageHeaderSection>
+                    </EuiPageHeader>
+                    <EuiPageContent grow={true} panelPaddingSize="l" hasShadow>
+                        <EuiFlexGroup gutterSize="l" direction="column" alignItems="center" justifyContent="spaceBetween" style={{ height: '100%' }}>
+                            <EuiFlexItem grow={false}>
+                                <EuiFlexGroup>
+                                    <EuiFlexItem>
+                                        <EuiFormRow label="Nickname">
+                                            <EuiFieldText
+                                                value={nicknameField}
+                                                onChange={(change) => setNicknameField(change.target.value)}></EuiFieldText>
+                                        </EuiFormRow>
+                                    </EuiFlexItem>
+                                    <EuiFlexItem>
+                                        <EuiFormRow hasEmptyLabelSpace>
+                                            <EuiButton
+                                                disabled={isDisabled}
+                                                isLoading={isLoading}
+                                                onClick={() => setNickname(nicknameField)}>
+                                                Change
                                         </EuiButton>
-                                    </EuiFormRow>
-                                </EuiFlexItem>
-                            </EuiFlexGroup>
-                        </EuiFlexItem>
+                                        </EuiFormRow>
+                                    </EuiFlexItem>
+                                </EuiFlexGroup>
+                            </EuiFlexItem>
 
-                        <EuiFlexItem grow={false}>
-                            <EuiFlexGroup gutterSize="l" wrap={true}>
-                                {(room?.users ?? []).map(user => {
-                                    return (
-                                        <EuiFlexItem grow={false} key={user.userId} style={{ minWidth: 140 }}>
-                                            <VoteCard user={user} />
-                                        </EuiFlexItem>
-                                    );
-                                })}
-                            </EuiFlexGroup>
-                        </EuiFlexItem>
-                        <EuiFlexItem grow={false}>
-                            <VoteCast options={[0, 0.5, 1, 2, 3, 5, 8, 13]} />
-                        </EuiFlexItem>
-                    </EuiFlexGroup>
-                </EuiPageContent>
-            </EuiPageBody>
-        </EuiPage>
+                            <EuiFlexItem grow={false}>
+                                <EuiFlexGroup justifyContent="center" direction="row" gutterSize="xl" responsive wrap={true} style={{ width: 'fit-content', margin: 'auto' }}>
+                                    {(room?.users ?? []).map(user => {
+                                        return (
+                                            <EuiFlexItem key={user.userId} grow={false} style={{ maxWidth: 400}}>
+                                                <UserCard user={user} />
+                                            </EuiFlexItem>
+                                        );
+                                    })}
+                                </EuiFlexGroup>
+                            </EuiFlexItem>
+                            
+                            <EuiFlexItem grow={false}>
+                                <VoteCast options={[0, 0.5, 1, 2, 3, 5, 8, 13]} />
+                            </EuiFlexItem>
+                        </EuiFlexGroup>
+                    </EuiPageContent>
+                </EuiPageBody>
+            </EuiPage>
+            <BottomBar />
+        </>
     );
 }
