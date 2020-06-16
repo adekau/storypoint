@@ -11,7 +11,8 @@ import { translateUsers } from './translation.ts';
 export async function emitEvent(users: IUser[], event: StoryPointEvent) {
     for (const user of users) {
         try {
-            (await getWS(user.userId))?.send(JSON.stringify(event));
+            const ws = getWS(user.userId);
+            ws?.send(JSON.stringify(event));
         } catch (e) {
             Logger.warn(`User ${user.userId} can not be reached.`);
             await removeUser(user.userId);
@@ -24,7 +25,7 @@ export async function joinEvent({ ev, userId, ws }: HandleEventArguments): Promi
     if (ev.event !== 'join')
         return;
 
-    await setWS(userId, ws);
+    setWS(userId, ws);
 
     const userJoin: IUser = {
         roomId: ev.roomId,
@@ -69,6 +70,7 @@ export async function createRoomEvent({ ev, userId, ws }: HandleEventArguments):
         roomName: ev.roomName,
         id: roomId
     };
+    await setRoom(roomId, room);
     const event = {
         event: 'roomCreate',
         roomId,

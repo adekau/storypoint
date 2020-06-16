@@ -13,11 +13,12 @@ export const wsMap = new Map<string, WebSocket>();
 
 export async function addUserToRoom(user: IUser, roomId: string): Promise<void> {
     const room = await getRoom(roomId);
+    console.log(room);
     if (!room)
         return;
     const users = room.users ? [...room.users, user] : [user];
     const newRoom = { ...room, users };
-    const b = await setRoom(roomId, newRoom);
+    await setRoom(roomId, newRoom);
 }
 
 export async function removeUser(userId: string): Promise<void> {
@@ -91,10 +92,10 @@ export async function setUser(userId: string, user: IUser): Promise<number> {
     return await redis.hset(USERS_KEY, userId, data);
 }
 
-export async function getWS(userId: string): Promise<WebSocket | undefined> {
+export function getWS(userId: string): WebSocket | undefined {
     return wsMap.get(userId);
 }
 
-export async function setWS(userId: string, ws: WebSocket): Promise<void> {
+export function setWS(userId: string, ws: WebSocket): void {
     wsMap.set(userId, ws);
 }
