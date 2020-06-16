@@ -13,7 +13,6 @@ export const wsMap = new Map<string, WebSocket>();
 
 export async function addUserToRoom(user: IUser, roomId: string): Promise<void> {
     const room = await getRoom(roomId);
-    console.log(room);
     if (!room)
         return;
     const users = room.users ? [...room.users, user] : [user];
