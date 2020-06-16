@@ -19,7 +19,7 @@ export function VoteCast(props: VoteCastProps) {
     const isDisabled = (webSocketStatus <= WebSocketStatus.Connecting) || !online;
 
     return (
-        <EuiPanel betaBadgeTitle={'Vote'} betaBadgeLabel={'Vote'} paddingSize="l">
+        <EuiPanel betaBadgeLabel={'Cast Vote'} paddingSize="l">
             <EuiFlexGroup direction="column" gutterSize="l">
                 <EuiFlexItem>
                     <EuiFlexGroup gutterSize="l" wrap={true}>

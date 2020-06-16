@@ -1,4 +1,4 @@
-import { EuiCard, EuiFlexItem } from '@elastic/eui';
+import { EuiCheckableCard, EuiFlexItem, EuiText, htmlIdGenerator } from '@elastic/eui';
 import React from 'react';
 
 export interface VoteCastCardProps {
@@ -11,11 +11,13 @@ export function VoteCastCard(props: VoteCastCardProps) {
     const { value, selected } = props;
 
     return (
-        <EuiFlexItem style={{ width: 120, minWidth: 120 }}>
-            <EuiCard
-                selectable={{ isSelected: selected, onClick: () => props.onClick(value) }}
-                title={value}
-                description={''}
+        <EuiFlexItem style={{ minWidth: 85 }}>
+            <EuiCheckableCard
+                id={htmlIdGenerator()()}
+                checked={selected}
+                onChange={() => props.onClick(value)}
+                value={value.toString()}
+                label={<EuiText>{value}</EuiText>}
             />
         </EuiFlexItem>
     );
