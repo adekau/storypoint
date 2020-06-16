@@ -3,7 +3,7 @@ import { v4 } from 'https://deno.land/std/uuid/mod.ts';
 import { IRoom } from '../shared/types/room.ts';
 import { StoryPointEvent } from '../shared/types/story-point-event.ts';
 import { IUser } from '../shared/types/user.ts';
-import { addUserToRoom, removeUser, roomsMap, usersMap } from './data/data.ts';
+import { addUserToRoom, getRoom, getWS, removeUser, setRoom, setUser, setWS } from './data/data.ts';
 import Logger from './logger.ts';
 import { HandleEventArguments } from './room.ts';
 import { translateUsers } from './translation.ts';
@@ -11,7 +11,7 @@ import { translateUsers } from './translation.ts';
 export async function emitEvent(users: IUser[], event: StoryPointEvent) {
     for (const user of users) {
         try {
-            user.websocket.send(JSON.stringify(event));
+            (await getWS(user.userId))?.send(JSON.stringify(event));
         } catch (e) {
             Logger.warn(`User ${user.userId} can not be reached.`);
             await removeUser(user.userId);
@@ -24,18 +24,20 @@ export async function joinEvent({ ev, userId, ws }: HandleEventArguments): Promi
     if (ev.event !== 'join')
         return;
 
+    await setWS(userId, ws);
+
     const userJoin: IUser = {
         roomId: ev.roomId,
-        websocket: ws,
         userId: userId,
         nickname: ev.nickname
     };
-    usersMap.set(userId, userJoin);
+
+    await setUser(userId, userJoin);
     await addUserToRoom(userJoin, ev.roomId);
     
     Logger.log(`User ${userJoin.userId} joined room ${userJoin.roomId}.`);
 
-    const room = roomsMap.get(ev.roomId);
+    const room = await getRoom(ev.roomId);
     const users = room?.users ?? [];
     const event: StoryPointEvent = {
         event: 'userJoin',
@@ -67,7 +69,6 @@ export async function createRoomEvent({ ev, userId, ws }: HandleEventArguments):
         roomName: ev.roomName,
         id: roomId
     };
-    roomsMap.set(roomId, room);
     const event = {
         event: 'roomCreate',
         roomId,
