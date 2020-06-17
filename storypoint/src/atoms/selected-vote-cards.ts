@@ -1,6 +1,6 @@
 import { atom } from "recoil";
 
-export const selectedVoteCardsState = atom<string[]>({
+export const selectedUserCardsState = atom<string[]>({
     key: 'selectedVoteCards',
     default: []
 });

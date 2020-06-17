@@ -11,7 +11,6 @@ import {
     EuiPageHeader,
     EuiPageHeaderSection,
     EuiTitle,
-    EuiFlexGrid,
 } from '@elastic/eui';
 import React, { useState } from 'react';
 import { useEffect } from 'react';
@@ -22,7 +21,7 @@ import { StoryPointEvent } from '../../../shared/types/story-point-event';
 import { nicknameState } from '../atoms/nickname';
 import { onlineState } from '../atoms/online';
 import { roomState } from '../atoms/room';
-import { selectedVoteCardsState } from '../atoms/selected-vote-cards';
+import { selectedUserCardsState } from '../atoms/selected-vote-cards';
 import { WebSocketStatus } from '../atoms/websocketStatus';
 import { useWebSocket } from '../hooks/websocket.hook';
 import { BottomBar } from './bottom-bar';
@@ -33,7 +32,7 @@ export default function Room() {
     const { roomId } = useParams();
     const [nickname, setNickname] = useRecoilState(nicknameState);
     const [nicknameField, setNicknameField] = useState(nickname);
-    const selectedCards = useRecoilValue(selectedVoteCardsState);
+    const selectedCards = useRecoilValue(selectedUserCardsState);
     const room = useRecoilValue(roomState);
     const { webSocket, webSocketStatus } = useWebSocket();
     const online = useRecoilValue(onlineState);

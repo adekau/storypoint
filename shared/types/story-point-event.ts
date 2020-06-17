@@ -1,5 +1,5 @@
+import { IRoom, IRoomDetail } from './room.ts';
 import { IUser, IUserDetail } from './user.ts';
-import { IRoom } from './room.ts';
 
 export type StoryPointEvent = {
     event: 'roomCreate';
@@ -26,4 +26,10 @@ export type StoryPointEvent = {
 } | {
     event: 'create';
     roomName: string;
+} | {
+    event: 'kick';
+    userIds: string[];
+} | {
+    event: 'kicked';
+    room: IRoomDetail;
 };

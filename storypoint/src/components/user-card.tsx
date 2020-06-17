@@ -1,9 +1,9 @@
 import { EuiAvatar, EuiCard } from '@elastic/eui';
 import React from 'react';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilValue, useSetRecoilState, useRecoilState } from 'recoil';
 
 import { IUserDetail } from '../../../shared/types/user';
-import { selectedVoteCardsState } from '../atoms/selected-vote-cards';
+import { selectedUserCardsState } from '../atoms/selected-vote-cards';
 import { voteCardState } from '../atoms/vote-card';
 import { isSelectedSelector } from '../selectors/is-selected';
 
@@ -13,14 +13,14 @@ export interface VoteCardProps {
 
 export function UserCard(props: VoteCardProps) {
     const vote = useRecoilValue(voteCardState(props.user.userId));
-    const setSelectedVoteCards = useSetRecoilState(selectedVoteCardsState);
+    const [selectedUserCards, setSelectedUserCards] = useRecoilState(selectedUserCardsState);
     const isSelected = useRecoilValue(isSelectedSelector(props.user.userId));
 
     const cardClick = () => {
         if (!isSelected)
-            setSelectedVoteCards(current => [...current, props.user.userId]);
+            setSelectedUserCards([...selectedUserCards, props.user.userId]);
         else
-            setSelectedVoteCards(current => current.filter(val => val !== props.user.userId));
+            setSelectedUserCards(selectedUserCards.filter(val => val !== props.user.userId));
     };
 
     return (

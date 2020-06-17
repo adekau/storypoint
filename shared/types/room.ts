@@ -5,3 +5,8 @@ export interface IRoom {
     users: Array<IUser>;
     roomName: string;
 }
+
+export interface IRoomDetail {
+    id: string;
+    roomName: string;
+}

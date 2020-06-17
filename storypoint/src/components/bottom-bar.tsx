@@ -1,20 +1,44 @@
-import { EuiBottomBar, EuiButtonEmpty, EuiFlexGroup, EuiFlexItem } from '@elastic/eui';
+import { EuiBottomBar, EuiButton, EuiButtonEmpty, EuiFlexGroup, EuiFlexItem } from '@elastic/eui';
 import React from 'react';
 import { useRecoilState } from 'recoil';
 
-import { selectedVoteCardsState } from '../atoms/selected-vote-cards';
+import { StoryPointEvent } from '../../../shared/types/story-point-event';
+import { selectedUserCardsState } from '../atoms/selected-vote-cards';
+import { WebSocketStatus } from '../atoms/websocketStatus';
+import { useWebSocket } from '../hooks/websocket.hook';
 
 export function BottomBar() {
-    const [selectedCards, setSelectedCards] = useRecoilState(selectedVoteCardsState);
+    const [selectedCards, setSelectedCards] = useRecoilState(selectedUserCardsState);
+    const { webSocket, webSocketStatus } = useWebSocket();
 
-    if (!selectedCards.length)
+    const kickSelection = () => {
+        const event: StoryPointEvent = {
+            event: 'kick',
+            userIds: [...selectedCards]
+        };
+
+        if (webSocketStatus === WebSocketStatus.Connected) {
+            webSocket.send(JSON.stringify(event));
+            setSelectedCards([]);
+        }
+    }
+
+    if (selectedCards.length === 0)
         return <></>;
     return (
         <EuiBottomBar>
             <EuiFlexGroup gutterSize="none" justifyContent="spaceBetween">
-                <EuiFlexItem grow={false}></EuiFlexItem>
+                <EuiFlexItem grow={false}>
+                    <EuiButton
+                        fill
+                        color="ghost"
+                        onClick={kickSelection}>
+                        Kick
+                    </EuiButton>
+                </EuiFlexItem>
                 <EuiFlexItem grow={false}>
                     <EuiButtonEmpty
+                        color="ghost"
                         onClick={() => setSelectedCards([])}>
                         Cancel Selection
                     </EuiButtonEmpty>

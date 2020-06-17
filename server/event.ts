@@ -3,7 +3,7 @@ import { v4 } from 'https://deno.land/std/uuid/mod.ts';
 import { IRoom } from '../shared/types/room.ts';
 import { StoryPointEvent } from '../shared/types/story-point-event.ts';
 import { IUser } from '../shared/types/user.ts';
-import { addUserToRoom, getRoom, getWS, removeUser, setRoom, setUser, setWS } from './data/data.ts';
+import { addUserToRoom, getRoom, getWS, removeUser, setRoom, setUser, setWS, getUser } from './data/data.ts';
 import Logger from './logger.ts';
 import { HandleEventArguments } from './room.ts';
 import { translateUsers } from './translation.ts';
@@ -24,8 +24,6 @@ export async function emitEvent(users: IUser[], event: StoryPointEvent) {
 export async function joinEvent({ ev, userId, ws }: HandleEventArguments): Promise<void> {
     if (ev.event !== 'join')
         return;
-
-    setWS(userId, ws);
 
     const userJoin: IUser = {
         roomId: ev.roomId,
@@ -84,5 +82,25 @@ export async function createRoomEvent({ ev, userId, ws }: HandleEventArguments):
         await ws.send(JSON.stringify(event));
     } catch (e) {
         Logger.warn(`User ${userId} unable to be reached while creating room.`);
+    }
+}
+
+export async function kickUsersEvent({ ev }: HandleEventArguments): Promise<void> {
+    if(ev.event !== 'kick')
+        return;
+    for (const uid of (ev.userIds ?? [])) {
+        const user = await getUser(uid);
+        if (!user)
+            continue;
+        const room = await getRoom(user?.roomId);
+        if (!room)
+            continue;
+        await removeUser(uid);
+        const userWS = getWS(uid);
+        const event: StoryPointEvent = {
+            event: 'kicked',
+            room
+        };
+        userWS?.send(JSON.stringify(event));
     }
 }
