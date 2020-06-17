@@ -44,6 +44,7 @@ export function useMessageHandler() {
                     setRoom(null);
                     setSelectedCards([]);
                     history.push('/');
+                    break;
                 default:
                     return;
             }

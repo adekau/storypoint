@@ -1,6 +1,6 @@
 import { EuiAvatar, EuiCard } from '@elastic/eui';
 import React from 'react';
-import { useRecoilValue, useSetRecoilState, useRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 
 import { IUserDetail } from '../../../shared/types/user';
 import { selectedUserCardsState } from '../atoms/selected-vote-cards';
