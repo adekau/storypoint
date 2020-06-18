@@ -16,16 +16,33 @@ export default async function handle(ws: WebSocket) {
     try {
         for await (const data of ws) {
             let parsed: any;
+
             if (typeof data === "string") {
-                parsed = JSON.parse(data);
+
+                try {
+                    parsed = JSON.parse(data);
+                } catch (ex) {
+                    Logger.error(`Unable to parse message ${data}`);
+                }
+
             } else if (data instanceof Uint8Array) {
-                parsed = JSON.parse((data as Uint8Array).toString());
+
+                try {
+                    parsed = JSON.parse((data as Uint8Array).toString());
+                } catch (ex) {
+                    Logger.error(`Unable to parse message ${data}`);
+                }
+
             } else if (isWebSocketPingEvent(data)) {
+
                 const [body] = data;
-                console.log("ws:Ping", body);
+                Logger.log(`Got WebSocket ping: ${body}`);
+
             } else if (isWebSocketCloseEvent(data)) {
+
                 await removeUser(userId);
                 Logger.log(`User ${userId} disconnected.`);
+                
             }
 
             if (parsed)
@@ -45,20 +62,30 @@ export default async function handle(ws: WebSocket) {
 }
 
 async function handleEvent({ ev }: HandleEventArguments): Promise<void> {
+    const args = arguments;
+
     switch (ev.event) {
         case 'join':
-            await joinEvent(arguments[0]);
+            await handleSafely(() => joinEvent(args[0]));
             break;
         case 'leave':
-            await leaveEvent(arguments[0]);
+            await handleSafely(() => leaveEvent(args[0]));
             break;
         case 'create':
-            await createRoomEvent(arguments[0]);
+            await handleSafely(() => createRoomEvent(args[0]));
             break;
         case 'kick':
-            await kickUsersEvent(arguments[0]);
+            await handleSafely(() => kickUsersEvent(args[0]));
             break;
         default:
             return;
+    }
+}
+
+async function handleSafely<T>(f: () => Promise<T>): Promise<void> {
+    try {
+        await f();
+    } catch (ex) {
+        Logger.error(`Error while handling event ${ex}`);
     }
 }

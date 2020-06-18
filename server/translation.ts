@@ -1,6 +1,5 @@
 import { IUser, IUserDetail } from '../shared/types/user.ts';
 import { IRoom, IRoomDetail } from '../shared/types/room.ts';
-import { getUser } from './data/data.ts';
 
 export function translateUsers(users: Array<IUser>): Array<IUserDetail> {
     return users.map(user => ({
