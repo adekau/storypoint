@@ -1,5 +1,6 @@
 import {
     EuiButton,
+    EuiDescriptionList,
     EuiFieldText,
     EuiFlexGroup,
     EuiFlexItem,
@@ -10,9 +11,7 @@ import {
     EuiPageContent,
     EuiPageHeader,
     EuiPageHeaderSection,
-    EuiText,
     EuiTitle,
-    EuiDescriptionList,
 } from '@elastic/eui';
 import React, { useState } from 'react';
 import { useEffect } from 'react';
