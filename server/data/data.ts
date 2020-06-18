@@ -102,6 +102,6 @@ export function setWS(userId: string, ws: WebSocket): void {
 export async function isRoomHost(userId: string, roomId: string): Promise<boolean> {
     const room = await getRoom(roomId);
     if (!room)
-        return false;
+        throw Error('Room does not exist');
     return room.host === userId;
 }

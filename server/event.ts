@@ -13,7 +13,7 @@ export async function emitEvent(users: IUser[], event: StoryPointEvent) {
     for (const user of users) {
         try {
             const ws = getWS(user.userId);
-            ws?.send(JSON.stringify(event));
+            trySend(ws, event, user.userId);
         } catch (e) {
             Logger.warn(`User ${user.userId} can not be reached.`);
             await removeUser(user.userId);
@@ -55,9 +55,7 @@ export async function leaveEvent({ ev, userId, ws }: HandleEventArguments): Prom
     const event: StoryPointEvent = {
         event: 'left'
     };
-    try {
-        ws.send(JSON.stringify(event));
-    } catch (e) { }
+    trySend(ws, event, userId);
 }
 
 export async function createRoomEvent({ ev, userId, ws }: HandleEventArguments): Promise<void> {
@@ -78,11 +76,7 @@ export async function createRoomEvent({ ev, userId, ws }: HandleEventArguments):
 
     Logger.log(`Room ${roomId} created.`);
 
-    try {
-        await ws.send(JSON.stringify(event));
-    } catch (e) {
-        Logger.warn(`User ${userId} unable to be reached while creating room.`);
-    }
+    trySend(ws, event, userId);
 }
 
 export async function kickUsersEvent({ ev, userId, ws }: HandleEventArguments): Promise<void> {
@@ -97,25 +91,34 @@ export async function kickUsersEvent({ ev, userId, ws }: HandleEventArguments): 
             continue;
         const canKick = await isRoomHost(userId, user.roomId);
         if (!canKick)
-            return respondNoPermissions(ws, 'kick');
-        await removeUser(uid);
+            return respondNoPermissions(arguments[0], 'kick');
+        try {
+            await removeUser(uid);
+        } catch (ex) {
+            throw new Error(`Unable to remove user ${uid} from room ${room.id}: ${ex}`);
+        }
         const userWS = getWS(uid);
         const event: StoryPointEvent = {
             event: 'kicked',
             room: await translateRoom(room)
         };
-        userWS?.send(JSON.stringify(event));
+        trySend(userWS, event, uid);
     }
 }
 
-export function respondNoPermissions(ws: WebSocket, action: string): void {
+export function respondNoPermissions({ userId, ws }: HandleEventArguments, action: string): void {
     const event: StoryPointEvent = {
         event: 'no-permissions',
         action
     };
+    trySend(ws, event, userId);
+}
+
+export function trySend(ws: WebSocket | undefined, event: StoryPointEvent, userId?: string): void {
     try {
-        ws.send(JSON.stringify(event));
-    } catch (e) {
-        Logger.error(`Error sending no-permissions event: ${e}`)
+        const msg = JSON.stringify(event);
+        ws?.send(msg);
+    } catch (ex) {
+        Logger.error(`Unable to reach user ${userId || ''} while trying to send event-type "${event.event}".`);
     }
 }
