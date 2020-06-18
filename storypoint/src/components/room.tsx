@@ -10,7 +10,9 @@ import {
     EuiPageContent,
     EuiPageHeader,
     EuiPageHeaderSection,
+    EuiText,
     EuiTitle,
+    EuiDescriptionList,
 } from '@elastic/eui';
 import React, { useState } from 'react';
 import { useEffect } from 'react';
@@ -62,7 +64,10 @@ export default function Room() {
         },
         [webSocketStatus, webSocket, roomId, nickname]
     );
-
+    const users = room?.users;
+    const host = room?.host;
+    const hostObj = users?.find(u => u.userId === host);
+    console.log(hostObj);
     return (
         <>
             <EuiPage
@@ -81,6 +86,10 @@ export default function Room() {
                         <EuiFlexGroup gutterSize="l" direction="column" alignItems="center" justifyContent="spaceBetween" style={{ height: '100%' }}>
                             <EuiFlexItem grow={false}>
                                 <EuiFlexGroup>
+                                    <EuiFlexItem>
+                                        <EuiDescriptionList
+                                            listItems={[{ title: 'Host', description: hostObj ? hostObj.nickname : 'No host'}]} />
+                                    </EuiFlexItem>
                                     <EuiFlexItem>
                                         <EuiFormRow label="Nickname">
                                             <EuiFieldText
