@@ -4,17 +4,23 @@ import clc from 'https://deno.land/x/color/index.ts';
 const colorText = (color: any) => (text: string) => 
     `${color.text(text)}${clc.reset.text('')}`;
 
+const colorGreen = colorText(clc.green);
+const colorBlue = colorText(clc.blue);
+const colorYellow = colorText(clc.yellow);
+const colorRed = colorText(clc.red);
+const colorDim = colorText(clc.dim);
+
 export default class Logger {
     public static log(message: string): void {
-        Logger.base(message, colorText(clc.dim)('LOG'));
+        Logger.base(message, colorDim('LOG'));
     }
 
     public static error(message: string): void {
-        Logger.base(message, colorText(clc.red)('ERROR'));
+        Logger.base(message, colorRed('ERROR'));
     }
 
     public static warn(message: string): void {
-        Logger.base(message, colorText(clc.yellow)('WARN'));
+        Logger.base(message, colorYellow('WARN'));
     }
 
     private static base(message: string, type: string): void {
@@ -23,9 +29,9 @@ export default class Logger {
         const results = [...message.matchAll(regex)].flat();
         let newMessage = message;
         results.forEach(guid => {
-            newMessage = newMessage.replace(guid, colorText(clc.green)(guid));
+            newMessage = newMessage.replace(guid, colorGreen(guid));
         });
 
-        console.log(`[${type}] [${colorText(clc.blue)(time)}]: ${newMessage}`);
+        console.log(`[${type}] [${colorBlue(time)}]: ${newMessage}`);
     }
 }
