@@ -3,9 +3,7 @@ import { IUser, IUserDetail } from './user.ts';
 
 export type StoryPointEvent = {
     event: 'roomCreate';
-    roomId: string;
-    users: IUser[];
-    roomName: string;
+    room: IRoomDetail;
 } | {
     event: 'userJoin';
     users: IUserDetail[];
@@ -32,4 +30,7 @@ export type StoryPointEvent = {
 } | {
     event: 'kicked';
     room: IRoomDetail;
+} | {
+    event: 'no-permissions',
+    action: string;
 };

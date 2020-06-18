@@ -18,12 +18,8 @@ export function useMessageHandler() {
             console.log(message)
             switch (message.event) {
                 case 'roomCreate':
-                    history.push(`/${message.roomId}`);
-                    setRoom({
-                        id: message.roomId,
-                        users: message.users,
-                        roomName: message.roomName,
-                    });
+                    history.push(`/${message.room.id}`);
+                    setRoom(message.room);
                     break;
                 case 'userJoin':
                     setRoom(message.room);
@@ -44,6 +40,14 @@ export function useMessageHandler() {
                     setRoom(null);
                     setSelectedCards([]);
                     history.push('/');
+                    break;
+                case 'no-permissions':
+                    toast.addToast({
+                        title: 'Insufficient Permissions',
+                        text: `You do not have permission to perform action "${message.action}".`,
+                        iconType: 'lock',
+                        color: 'danger'
+                    });
                     break;
                 default:
                     return;

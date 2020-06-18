@@ -98,3 +98,10 @@ export function getWS(userId: string): WebSocket | undefined {
 export function setWS(userId: string, ws: WebSocket): void {
     wsMap.set(userId, ws);
 }
+
+export async function isRoomHost(userId: string, roomId: string): Promise<boolean> {
+    const room = await getRoom(roomId);
+    if (!room)
+        return false;
+    return room.host === userId;
+}

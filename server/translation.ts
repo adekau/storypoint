@@ -1,5 +1,6 @@
 import { IUser, IUserDetail } from '../shared/types/user.ts';
 import { IRoom, IRoomDetail } from '../shared/types/room.ts';
+import { getUser } from './data/data.ts';
 
 export function translateUsers(users: Array<IUser>): Array<IUserDetail> {
     return users.map(user => ({
@@ -9,9 +10,11 @@ export function translateUsers(users: Array<IUser>): Array<IUserDetail> {
     }));
 }
 
-export function translateRoom(room: IRoom): IRoomDetail {
+export async function translateRoom(room: IRoom): Promise<IRoomDetail> {
     return {
         id: room.id,
-        roomName: room.roomName
+        roomName: room.roomName,
+        host: room.host,
+        users: translateUsers([...room.users])
     };
 }
