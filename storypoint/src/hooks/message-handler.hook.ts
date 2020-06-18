@@ -49,6 +49,14 @@ export function useMessageHandler() {
                         color: 'danger'
                     });
                     break;
+                case 'error':
+                    toast.addToast({
+                        title: 'Error',
+                        text: `An error has occurred. Status code ${message.status}: ${message.message}`,
+                        iconType: 'bug',
+                        color: 'danger'
+                    });
+                    break;
                 default:
                     return;
             }

@@ -13,7 +13,7 @@ export type StoryPointEvent = {
     users: IUserDetail[];
     room: IRoom;
 } | {
-    event: 'left'
+    event: 'left';
 } | {
     event: 'leave';
     roomId: string;
@@ -31,6 +31,10 @@ export type StoryPointEvent = {
     event: 'kicked';
     room: IRoomDetail;
 } | {
-    event: 'no-permissions',
+    event: 'no-permissions';
     action: string;
+} | {
+    event: 'error';
+    status: number;
+    message: string;
 };

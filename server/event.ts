@@ -122,3 +122,12 @@ export function trySend(ws: WebSocket | undefined, event: StoryPointEvent, userI
         Logger.error(`Unable to reach user ${userId || ''} while trying to send event-type "${event.event}".`);
     }
 }
+
+export function respondWithError({ ws, userId }: HandleEventArguments, status: number, message: string): void {
+    const event: StoryPointEvent = {
+        event: 'error',
+        status,
+        message
+    };
+    trySend(ws, event, userId);
+}

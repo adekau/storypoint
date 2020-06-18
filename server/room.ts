@@ -3,7 +3,7 @@ import { isWebSocketCloseEvent, isWebSocketPingEvent, WebSocket } from 'https://
 
 import { StoryPointEvent } from '../shared/types/story-point-event.ts';
 import { removeUser, setWS } from './data/data.ts';
-import { createRoomEvent, joinEvent, kickUsersEvent, leaveEvent } from './event.ts';
+import { createRoomEvent, joinEvent, kickUsersEvent, leaveEvent, respondWithError } from './event.ts';
 import Logger from './logger.ts';
 
 export type HandleEventArguments = { ev: StoryPointEvent, userId: string, ws: WebSocket };
@@ -42,7 +42,7 @@ export default async function handle(ws: WebSocket) {
 
                 await removeUser(userId);
                 Logger.log(`User ${userId} disconnected.`);
-                
+
             }
 
             if (parsed)
@@ -62,30 +62,31 @@ export default async function handle(ws: WebSocket) {
 }
 
 async function handleEvent({ ev }: HandleEventArguments): Promise<void> {
-    const args = arguments;
+    const args = arguments[0];
 
     switch (ev.event) {
         case 'join':
-            await handleSafely(() => joinEvent(args[0]));
+            await handleSafely(args, joinEvent);
             break;
         case 'leave':
-            await handleSafely(() => leaveEvent(args[0]));
+            await handleSafely(args, leaveEvent);
             break;
         case 'create':
-            await handleSafely(() => createRoomEvent(args[0]));
+            await handleSafely(args, createRoomEvent);
             break;
         case 'kick':
-            await handleSafely(() => kickUsersEvent(args[0]));
+            await handleSafely(args, kickUsersEvent);
             break;
         default:
             return;
     }
 }
 
-async function handleSafely<T>(f: () => Promise<T>): Promise<void> {
+async function handleSafely<T>({ ev, userId }: HandleEventArguments, f: (...args: any[]) => Promise<T>): Promise<void> {
     try {
-        await f();
+        await f(arguments[0]);
     } catch (ex) {
-        Logger.error(`Error while handling event ${ex}`);
+        Logger.error(`Error while handling event "${ev.event}" for user ${userId}: ${ex}`);
+        respondWithError(arguments[0], 500, 'Internal server error');
     }
 }
