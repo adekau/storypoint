@@ -12,7 +12,7 @@ export default async function handle(ws: WebSocket) {
     const userId = v4.generate();
     setWS(userId, ws);
     Logger.log(`User ${userId} connected.`);
-    
+
     try {
         for await (const data of ws) {
             let parsed: any;
@@ -63,30 +63,32 @@ export default async function handle(ws: WebSocket) {
 
 async function handleEvent({ ev }: HandleEventArguments): Promise<void> {
     const args = arguments[0];
+    const handleWithArgs = handleSafely(args);
 
     switch (ev.event) {
         case 'join':
-            await handleSafely(args, joinEvent);
+            await handleWithArgs(joinEvent);
             break;
         case 'leave':
-            await handleSafely(args, leaveEvent);
+            await handleWithArgs(leaveEvent);
             break;
         case 'create':
-            await handleSafely(args, createRoomEvent);
+            await handleWithArgs(createRoomEvent);
             break;
         case 'kick':
-            await handleSafely(args, kickUsersEvent);
+            await handleWithArgs(kickUsersEvent);
             break;
         default:
             return;
     }
 }
 
-async function handleSafely<T>({ ev, userId }: HandleEventArguments, f: (...args: any[]) => Promise<T>): Promise<void> {
-    try {
-        await f(arguments[0]);
-    } catch (ex) {
-        Logger.error(`Error while handling event "${ev.event}" for user ${userId}: ${ex}`);
-        respondWithError(arguments[0], 500, 'Internal server error');
-    }
-}
+const handleSafely = ({ ev, userId, ws }: HandleEventArguments) =>
+    async <T>(eventHandler: (eventArgs: HandleEventArguments) => Promise<T>) => {
+        try {
+            await eventHandler({ ev, userId, ws });
+        } catch (ex) {
+            Logger.error(`Error while handling event "${ev.event}" for user ${userId}: ${ex}`);
+            respondWithError({ ev, userId, ws }, 500, 'Internal server error');
+        }
+    };
