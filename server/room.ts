@@ -62,8 +62,7 @@ export default async function handle(ws: WebSocket) {
 }
 
 async function handleEvent({ ev }: HandleEventArguments): Promise<void> {
-    const args = arguments[0];
-    const handleWithArgs = handleSafely(args);
+    const handleWithArgs = handleSafely(arguments[0]);
 
     switch (ev.event) {
         case 'join':
