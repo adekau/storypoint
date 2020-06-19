@@ -84,7 +84,7 @@ export default function Room() {
                     <EuiPageContent grow={true} panelPaddingSize="l" hasShadow>
                         <EuiFlexGroup gutterSize="l" direction="column" alignItems="center" justifyContent="spaceBetween" style={{ height: '100%' }}>
                             <EuiFlexItem grow={false}>
-                                <EuiFlexGroup>
+                                {/* <EuiFlexGroup>
                                     <EuiFlexItem>
                                         <EuiDescriptionList
                                             listItems={[{ title: 'Host', description: hostObj ? hostObj.nickname : 'No host'}]} />
@@ -106,7 +106,7 @@ export default function Room() {
                                         </EuiButton>
                                         </EuiFormRow>
                                     </EuiFlexItem>
-                                </EuiFlexGroup>
+                                </EuiFlexGroup> */}
                             </EuiFlexItem>
 
                             <EuiFlexItem grow={false}>
