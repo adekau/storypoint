@@ -8,14 +8,16 @@ import {
     EuiIcon,
     EuiToolTip,
 } from '@elastic/eui';
-import React from 'react';
+import React, { useCallback } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 
+import { StoryPointEvent } from '../../../shared/types/story-point-event';
 import { onlineState } from '../atoms/online';
+import { userIdState } from '../atoms/user-id';
 import { WebSocketStatus } from '../atoms/websocketStatus';
-import RoomSettings from './room-settings';
 import { useWebSocket } from '../hooks/websocket.hook';
+import RoomSettings from './room-settings';
 
 export interface RoomHeaderProps {
     host: any;
@@ -23,9 +25,20 @@ export interface RoomHeaderProps {
 
 export default function RoomHeader({ host }: RoomHeaderProps) {
     const online = useRecoilValue(onlineState);
-    const { webSocketStatus } = useWebSocket();
+    const { webSocket, webSocketStatus } = useWebSocket();
+    const userId = useRecoilValue(userIdState);
     const isDisabled = (webSocketStatus <= WebSocketStatus.Connecting) || !online;
     const history = useHistory();
+
+    const requestChangeHost = useCallback(() => {
+        if (host || !userId || !webSocket || webSocketStatus !== WebSocketStatus.Connected)
+            return;
+        const event: StoryPointEvent = {
+            event: 'hostChange',
+            userId
+        };
+        webSocket.send(JSON.stringify(event));
+    }, [host, userId, webSocket]);
     
     return (
         <EuiHeader style={{ padding: -24 }}>
@@ -48,7 +61,8 @@ export default function RoomHeader({ host }: RoomHeaderProps) {
                         }>
                         <EuiHeaderSectionItemButton
                             style={{ padding: '0 10px' }}
-                            disabled={!!host}>
+                            disabled={!!host}
+                            onClick={requestChangeHost}>
                             <EuiHealth color={host ? 'success' : 'danger'}>
                                 <EuiDescriptionList
                                     type="inline"

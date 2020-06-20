@@ -2,8 +2,16 @@ import { v4 } from 'https://deno.land/std/uuid/mod.ts';
 import { isWebSocketCloseEvent, isWebSocketPingEvent, WebSocket } from 'https://deno.land/std/ws/mod.ts';
 
 import { StoryPointEvent } from '../shared/types/story-point-event.ts';
-import { removeUser, setWS } from './data/data.ts';
-import { createRoomEvent, joinEvent, kickUsersEvent, leaveEvent, respondWithError } from './event.ts';
+import { removeUser, setWS, delWS } from './data/data.ts';
+import {
+    createRoomEvent,
+    hostChangeEvent,
+    joinEvent,
+    kickUsersEvent,
+    leaveEvent,
+    respondWithError,
+    trySend,
+} from './event.ts';
 import Logger from './logger.ts';
 
 export type HandleEventArguments = { ev: StoryPointEvent, userId: string, ws: WebSocket };
@@ -12,6 +20,12 @@ export default async function handle(ws: WebSocket) {
     const userId = v4.generate();
     setWS(userId, ws);
     Logger.log(`User ${userId} connected.`);
+
+    const connectAck: StoryPointEvent = {
+        event: 'connectAck',
+        userId
+    };
+    await trySend(ws, connectAck, userId);
 
     try {
         for await (const data of ws) {
@@ -42,7 +56,7 @@ export default async function handle(ws: WebSocket) {
 
                 await removeUser(userId);
                 Logger.log(`User ${userId} disconnected.`);
-
+                delWS(userId);
             }
 
             if (parsed)
@@ -77,6 +91,9 @@ async function handleEvent({ ev }: HandleEventArguments): Promise<void> {
         case 'kick':
             await handleWithArgs(kickUsersEvent);
             break;
+        case 'hostChange':
+            await handleWithArgs(hostChangeEvent);
+            break;
         default:
             return;
     }
@@ -88,6 +105,6 @@ const handleSafely = ({ ev, userId, ws }: HandleEventArguments) =>
             await eventHandler({ ev, userId, ws });
         } catch (ex) {
             Logger.error(`Error while handling event "${ev.event}" for user ${userId}: ${ex}`);
-            respondWithError({ ev, userId, ws }, 500, 'Internal server error');
+            await respondWithError({ ev, userId, ws }, 500, 'Internal server error');
         }
     };

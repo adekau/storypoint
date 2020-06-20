@@ -6,17 +6,22 @@ import { StoryPointEvent } from '../../../shared/types/story-point-event';
 import { roomState } from '../atoms/room';
 import { selectedUserCardsState } from '../atoms/selected-vote-cards';
 import { useGlobalToast } from './global-toast.hook';
+import { userIdState } from '../atoms/user-id';
 
 export function useMessageHandler() {
     const history = useHistory();
     const toast = useGlobalToast();
     const setRoom = useSetRecoilState(roomState);
+    const setUserId = useSetRecoilState(userIdState);
     const setSelectedCards = useSetRecoilState(selectedUserCardsState);
 
     return useCallback(
         (message: StoryPointEvent) => {
             console.log(message)
             switch (message.event) {
+                case 'connectAck':
+                    setUserId(message.userId);
+                    break;
                 case 'roomCreate':
                     history.push(`/${message.room.id}`);
                     setRoom(message.room);
@@ -56,6 +61,12 @@ export function useMessageHandler() {
                         iconType: 'bug',
                         color: 'danger'
                     });
+                    break;
+                case 'hostChange':
+                    setRoom(currentRoom => currentRoom ? ({
+                        ...currentRoom,
+                        host: message.userId
+                    }) : null);
                     break;
                 default:
                     return;

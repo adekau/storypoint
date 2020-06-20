@@ -13,16 +13,19 @@ export async function emitEvent(users: IUser[], event: StoryPointEvent) {
     for (const user of users) {
         try {
             const ws = getWS(user.userId);
+            if (!ws) {
+                await removeUser(user.userId);
+                continue;
+            }
             trySend(ws, event, user.userId);
         } catch (e) {
             Logger.warn(`User ${user.userId} can not be reached.`);
-            await removeUser(user.userId);
             break;
         }
     }
 }
 
-export async function joinEvent({ ev, userId, ws }: HandleEventArguments): Promise<void> {
+export async function joinEvent({ ev, userId }: HandleEventArguments): Promise<void> {
     if (ev.event !== 'join')
         return;
 
@@ -55,7 +58,7 @@ export async function leaveEvent({ ev, userId, ws }: HandleEventArguments): Prom
     const event: StoryPointEvent = {
         event: 'left'
     };
-    trySend(ws, event, userId);
+    await trySend(ws, event, userId);
 }
 
 export async function createRoomEvent({ ev, userId, ws }: HandleEventArguments): Promise<void> {
@@ -76,7 +79,7 @@ export async function createRoomEvent({ ev, userId, ws }: HandleEventArguments):
 
     Logger.log(`Room ${roomId} created.`);
 
-    trySend(ws, event, userId);
+    await trySend(ws, event, userId);
 }
 
 export async function kickUsersEvent({ ev, userId, ws }: HandleEventArguments): Promise<void> {
@@ -91,7 +94,7 @@ export async function kickUsersEvent({ ev, userId, ws }: HandleEventArguments): 
             continue;
         const canKick = await isRoomHost(userId, user.roomId);
         if (!canKick)
-            return respondNoPermissions(arguments[0], 'kick');
+            return await respondNoPermissions(arguments[0], 'kick');
         try {
             await removeUser(uid);
         } catch (ex) {
@@ -102,32 +105,52 @@ export async function kickUsersEvent({ ev, userId, ws }: HandleEventArguments): 
             event: 'kicked',
             room: await translateRoom(room)
         };
-        trySend(userWS, event, uid);
+        await trySend(userWS, event, uid);
     }
 }
 
-export function respondNoPermissions({ userId, ws }: HandleEventArguments, action: string): void {
+export async function hostChangeEvent({ ev, userId }: HandleEventArguments): Promise<void> {
+    if(ev.event !== 'hostChange')
+        return;
+    const user = await getUser(userId);
+    if (!user)
+        return;
+    const room = await getRoom(user.roomId);
+    if (!room)
+        return;
+    if (room.users.find(user => user.userId === room.host))
+        return await respondNoPermissions(arguments[0], 'Volunteer Host');
+    const newRoom: IRoom = {
+        ...room,
+        host: ev.userId
+    };
+    await setRoom(room.id, newRoom);
+    await emitEvent(room.users, ev);
+}
+
+export async function respondNoPermissions({ userId, ws }: HandleEventArguments, action: string): Promise<void> {
     const event: StoryPointEvent = {
         event: 'no-permissions',
         action
     };
-    trySend(ws, event, userId);
+    await trySend(ws, event, userId);
 }
 
-export function trySend(ws: WebSocket | undefined, event: StoryPointEvent, userId?: string): void {
+export async function trySend(ws: WebSocket | undefined, event: StoryPointEvent, userId?: string): Promise<void> {
     try {
         const msg = JSON.stringify(event);
         ws?.send(msg);
     } catch (ex) {
         Logger.error(`Unable to reach user ${userId || ''} while trying to send event-type "${event.event}".`);
+        await removeUser(userId || '');
     }
 }
 
-export function respondWithError({ ws, userId }: HandleEventArguments, status: number, message: string): void {
+export async function respondWithError({ ws, userId }: HandleEventArguments, status: number, message: string): Promise<void> {
     const event: StoryPointEvent = {
         event: 'error',
         status,
         message
     };
-    trySend(ws, event, userId);
+    await trySend(ws, event, userId);
 }

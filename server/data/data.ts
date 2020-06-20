@@ -22,28 +22,28 @@ export async function addUserToRoom(user: IUser, roomId: string): Promise<void> 
 
 export async function removeUser(userId: string): Promise<void> {
     const user = await getUser(userId);
-    if (user) {
-        await redisDel(USERS_KEY)(userId);
-        const room = await getRoom(user.roomId);
-        if (!room)
-            return;
-        const users = room.users ?? [];
-        const newUsers = users.filter(u => u.userId !== userId);
-        const newRoom = { ...room, users: newUsers };
-        await setRoom(user.roomId, newRoom);
-        
-        Logger.log(`User ${user.userId} left room ${user.roomId}.`);
+    if (!user)
+        return;
+    const room = await getRoom(user.roomId);
+    await delUser(userId);
+    if (!room)
+        return;
+    const users = room.users ?? [];
+    const newUsers = users.filter(u => u.userId !== userId);
+    const newRoom = { ...room, users: newUsers };
+    await setRoom(user.roomId, newRoom);
 
-        const event: StoryPointEvent = {
-            event: 'userLeave',
-            users: translateUsers(newUsers),
-            room: newRoom
-        };
-        emitEvent(newUsers, event);
-    }
+    Logger.log(`User ${user.userId} left room ${user.roomId}.`);
+
+    const event: StoryPointEvent = {
+        event: 'userLeave',
+        users: translateUsers(newUsers),
+        room: newRoom
+    };
+    await emitEvent(newUsers, event);
 }
 
-export async function getRoom(roomId: string): Promise<IRoom | undefined> { 
+export async function getRoom(roomId: string): Promise<IRoom | undefined> {
     const roomData = await redisGet(ROOMS_KEY)(roomId);
     if (!roomData)
         return undefined;
@@ -86,12 +86,20 @@ export async function setUser(userId: string, user: IUser): Promise<number> {
     return await redisSet(USERS_KEY)(userId)(data);
 }
 
+export async function delUser(userId: string): Promise<number> {
+    return await redisDel(USERS_KEY)(userId);
+}
+
 export function getWS(userId: string): WebSocket | undefined {
     return wsMap.get(userId);
 }
 
 export function setWS(userId: string, ws: WebSocket): void {
     wsMap.set(userId, ws);
+}
+
+export function delWS(userId: string): void {
+    wsMap.delete(userId);
 }
 
 export async function isRoomHost(userId: string, roomId: string): Promise<boolean> {
