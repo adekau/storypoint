@@ -18,6 +18,7 @@ import { StoryPointEvent } from '../../../shared/types/story-point-event';
 import { nicknameState } from '../atoms/nickname';
 import { roomState } from '../atoms/room';
 import { selectedUserCardsState } from '../atoms/selected-vote-cards';
+import { voteOptionsState } from '../atoms/vote-options';
 import { WebSocketStatus } from '../atoms/websocketStatus';
 import { useWebSocket } from '../hooks/websocket.hook';
 import { BottomBar } from './bottom-bar';
@@ -28,6 +29,7 @@ import { VoteCast } from './vote-cast';
 export default function Room() {
     const { roomId } = useParams();
     const selectedCards = useRecoilValue(selectedUserCardsState);
+    const voteOptions = useRecoilValue(voteOptionsState);
     const nickname = useRecoilValue(nicknameState);
     const room = useRecoilValue(roomState);
     const { webSocket, webSocketStatus } = useWebSocket();
@@ -91,7 +93,7 @@ export default function Room() {
                             </EuiFlexItem>
 
                             <EuiFlexItem grow={false}>
-                                <VoteCast options={[0, 0.5, 1, 2, 3, 5, 8, 13]} />
+                                <VoteCast options={voteOptions} />
                             </EuiFlexItem>
                         </EuiFlexGroup>
                     </EuiPageContent>
