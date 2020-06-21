@@ -2,10 +2,10 @@ import { EuiBottomBar, EuiButton, EuiButtonEmpty, EuiFlexGroup, EuiFlexItem } fr
 import React from 'react';
 import { useRecoilState } from 'recoil';
 
-import { StoryPointEvent } from '../../../shared/types/story-point-event';
 import { selectedUserCardsState } from '../atoms/selected-vote-cards';
 import { WebSocketStatus } from '../atoms/websocketStatus';
 import { useWebSocket } from '../hooks/websocket.hook';
+import { StoryPointEvent } from '../types/story-point-event';
 
 export function BottomBar() {
     const [selectedCards, setSelectedCards] = useRecoilState(selectedUserCardsState);

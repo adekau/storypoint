@@ -2,13 +2,13 @@ import { EuiAvatar, EuiCard } from '@elastic/eui';
 import React from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
-import { IUserDetail } from '../../../shared/types/user';
 import { selectedUserCardsState } from '../atoms/selected-vote-cards';
 import { voteCardState } from '../atoms/vote-card';
 import { isSelectedSelector } from '../selectors/is-selected';
+import { IUser } from '../types/user';
 
 export interface VoteCardProps {
-    user: IUserDetail;
+    user: IUser;
 }
 
 export function UserCard(props: VoteCardProps) {

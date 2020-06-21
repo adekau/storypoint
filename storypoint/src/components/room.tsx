@@ -14,13 +14,13 @@ import { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 
-import { StoryPointEvent } from '../../../shared/types/story-point-event';
 import { nicknameState } from '../atoms/nickname';
 import { roomState } from '../atoms/room';
 import { selectedUserCardsState } from '../atoms/selected-vote-cards';
 import { voteOptionsState } from '../atoms/vote-options';
 import { WebSocketStatus } from '../atoms/websocketStatus';
 import { useWebSocket } from '../hooks/websocket.hook';
+import { StoryPointEvent } from '../types/story-point-event';
 import { BottomBar } from './bottom-bar';
 import RoomHeader from './room-header';
 import { UserCard } from './user-card';

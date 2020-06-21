@@ -12,11 +12,11 @@ import React, { useCallback } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 
-import { StoryPointEvent } from '../../../shared/types/story-point-event';
 import { onlineState } from '../atoms/online';
 import { userIdState } from '../atoms/user-id';
 import { WebSocketStatus } from '../atoms/websocketStatus';
 import { useWebSocket } from '../hooks/websocket.hook';
+import { StoryPointEvent } from '../types/story-point-event';
 import RoomSettings from './room-settings';
 
 export interface RoomHeaderProps {

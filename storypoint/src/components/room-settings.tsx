@@ -1,4 +1,5 @@
 import {
+    EuiComboBox,
     EuiFieldText,
     EuiFocusTrap,
     EuiForm,
@@ -8,10 +9,11 @@ import {
     EuiPopover,
     EuiToolTip,
 } from '@elastic/eui';
-import React, { useState, useCallback } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { useRecoilState } from 'recoil';
 
 import { nicknameState } from '../atoms/nickname';
+import { voteOptionsState } from '../atoms/vote-options';
 
 export interface RoomSettingsProps {
     disabled?: boolean;
@@ -19,8 +21,12 @@ export interface RoomSettingsProps {
 
 export default function RoomSettings(props: RoomSettingsProps) {
     const [nickname, setNickname] = useRecoilState(nicknameState);
+    const [voteOptions] = useRecoilState(voteOptionsState);
     const [nicknameField, setNicknameField] = useState(nickname);
     const [open, setOpen] = useState(false);
+
+    const defaultOptions = [0, 0.5, 1, 2, 3, 5, 8, 13, 20, 40, 100].map(opt => ({ label: String(opt) }));
+    const selectedOptions = useMemo(() => voteOptions.map(opt => ({ label: String(opt) })), [voteOptions]);
 
     const close = useCallback(() => {
         setOpen(false);
@@ -60,6 +66,16 @@ export default function RoomSettings(props: RoomSettingsProps) {
                             compressed
                             onChange={(ev) => setNicknameField(ev.target.value)}
                         />
+                    </EuiFormRow>
+                    <EuiFormRow
+                        label="Vote Options"
+                        display="columnCompressed">
+                        <EuiComboBox
+                            options={defaultOptions}
+                            selectedOptions={selectedOptions}
+                            // onCreateOption={}
+                            compressed>
+                        </EuiComboBox>
                     </EuiFormRow>
                 </EuiForm>
             </EuiFocusTrap>

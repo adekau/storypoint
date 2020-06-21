@@ -1,8 +1,7 @@
 import { atom } from 'recoil';
+import { IRoom } from '../types/room';
 
-import { IRoomDetail } from '../../../shared/types/room';
-
-export const roomState = atom<IRoomDetail | null>({
+export const roomState = atom<IRoom | null>({
     key: 'room',
     default: null
 });

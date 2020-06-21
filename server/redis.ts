@@ -21,7 +21,7 @@ export const getRedisConnection: () => Promise<Redis | undefined> = memoize(
         return redis;
     },
     undefined
-);
+) as any;
 
 export const redisGet = (hashmap: string) =>
     async (key: string) => {

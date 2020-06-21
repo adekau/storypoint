@@ -2,11 +2,11 @@ import { useCallback } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
 
-import { StoryPointEvent } from '../../../shared/types/story-point-event';
 import { roomState } from '../atoms/room';
 import { selectedUserCardsState } from '../atoms/selected-vote-cards';
-import { useGlobalToast } from './global-toast.hook';
 import { userIdState } from '../atoms/user-id';
+import { StoryPointEvent } from '../types/story-point-event';
+import { useGlobalToast } from './global-toast.hook';
 
 export function useMessageHandler() {
     const history = useHistory();

@@ -1,8 +1,7 @@
 import { v4 } from 'https://deno.land/std/uuid/mod.ts';
 import { isWebSocketCloseEvent, isWebSocketPingEvent, WebSocket } from 'https://deno.land/std/ws/mod.ts';
 
-import { StoryPointEvent } from '../shared/types/story-point-event.ts';
-import { removeUser, setWS, delWS } from './data/data.ts';
+import { delWS, removeUser, setWS } from './data/data.ts';
 import {
     createRoomEvent,
     hostChangeEvent,
@@ -13,6 +12,7 @@ import {
     trySend,
 } from './event.ts';
 import Logger from './logger.ts';
+import { StoryPointEvent } from './types/story-point-event.ts';
 
 export type HandleEventArguments = { ev: StoryPointEvent, userId: string, ws: WebSocket };
 

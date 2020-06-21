@@ -7,13 +7,13 @@ import {
     EuiPopover,
     EuiSuperSelect,
 } from '@elastic/eui';
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
 
-import { Themes } from '../../../shared/types/themes';
 import { isOpenState } from '../atoms/settings-menu';
 import setTheme from '../helpers/set-theme';
 import { useGlobalToast } from '../hooks/global-toast.hook';
+import { Themes } from '../types/themes';
 
 let initialLoad = true;
 

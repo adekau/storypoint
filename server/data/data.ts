@@ -1,12 +1,12 @@
 import { WebSocket } from 'https://deno.land/std/ws/mod.ts';
 
-import { IRoom } from '../../shared/types/room.ts';
-import { StoryPointEvent } from '../../shared/types/story-point-event.ts';
-import { IUser } from '../../shared/types/user.ts';
 import { emitEvent } from '../event.ts';
 import Logger from '../logger.ts';
 import { redisDel, redisGet, redisSet, ROOMS_KEY, USERS_KEY } from '../redis.ts';
 import { translateUsers } from '../translation.ts';
+import { IRoom } from '../types/room.ts';
+import { StoryPointEvent } from '../types/story-point-event.ts';
+import { IUser } from '../types/user.ts';
 
 // Map from WebSocket's user uuid to the WebSocket
 export const wsMap = new Map<string, WebSocket>();

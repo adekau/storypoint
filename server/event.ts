@@ -1,13 +1,13 @@
 import { v4 } from 'https://deno.land/std/uuid/mod.ts';
 import { WebSocket } from 'https://deno.land/std/ws/mod.ts';
 
-import { IRoom } from '../shared/types/room.ts';
-import { StoryPointEvent } from '../shared/types/story-point-event.ts';
-import { IUser } from '../shared/types/user.ts';
 import { addUserToRoom, getRoom, getUser, getWS, isRoomHost, removeUser, setRoom, setUser } from './data/data.ts';
 import Logger from './logger.ts';
 import { HandleEventArguments } from './room.ts';
 import { translateRoom, translateUsers } from './translation.ts';
+import { IRoom } from './types/room.ts';
+import { StoryPointEvent } from './types/story-point-event.ts';
+import { IUser } from './types/user.ts';
 
 export async function emitEvent(users: IUser[], event: StoryPointEvent) {
     for (const user of users) {

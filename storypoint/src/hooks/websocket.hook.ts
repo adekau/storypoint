@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
 
-import { StoryPointEvent } from '../../../shared/types/story-point-event';
 import { webSocketState } from '../atoms/websocket';
 import { WebSocketStatus, webSocketStatusState } from '../atoms/websocketStatus';
 import { createWebSocket } from '../helpers/create-web-socket';
+import { StoryPointEvent } from '../types/story-point-event';
 import { useGlobalToast } from './global-toast.hook';
 import { useMessageHandler } from './message-handler.hook';
 

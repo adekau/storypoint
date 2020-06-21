@@ -1,4 +1,4 @@
-import { Themes } from '../../../shared/types/themes';
+import { Themes } from '../types/themes';
 
 export default function setTheme(theme: Themes): void {
     const themeRel = document.querySelector('#themeRel');
