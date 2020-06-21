@@ -75,7 +75,7 @@ export default function Room() {
                         </EuiPageHeaderSection>
                     </EuiPageHeader>
                     <EuiPageContent grow={true} panelPaddingSize="l" hasShadow>
-                        <EuiFlexGroup gutterSize="xl" direction="column" alignItems="center" justifyContent="spaceBetween" style={{ height: '100%' }}>
+                        <EuiFlexGroup responsive={false} gutterSize="xl" direction="column" alignItems="center" justifyContent="spaceBetween" style={{ height: '100%' }}>
                             <EuiFlexItem grow={false} style={{ width: '100%', marginTop: 0 }}>
                                 <RoomHeader host={hostObj} />
                             </EuiFlexItem>
