@@ -1,8 +1,8 @@
 import { Toast } from '@elastic/eui/src/components/toast/global_toast_list';
+import { useCallback } from 'react';
 import { useSetRecoilState } from 'recoil';
 
 import { toastsState } from '../atoms/toasts';
-import { useCallback } from 'react';
 
 type OptionalIdToast = Omit<Toast, 'id'> & Partial<Pick<Toast, 'id'>>;
 
@@ -25,7 +25,7 @@ export function useGlobalToast() {
             ]);
         }, [setToasts]),
 
-        addServerConnectedToast: () => {
+        addServerConnectedToast: useCallback(() => {
             setToasts(currentToasts => [
                 ...currentToasts,
                 {
@@ -36,9 +36,9 @@ export function useGlobalToast() {
                     color: 'success'
                 }
             ]);
-        },
+        }, [setToasts]),
 
-        addLocalNetOfflineToast: () => {
+        addLocalNetOfflineToast: useCallback(() => {
             setToasts(currentToasts => [
                 ...currentToasts,
                 {
@@ -49,9 +49,9 @@ export function useGlobalToast() {
                     color: 'danger'
                 }
             ]);
-        },
+        }, [setToasts]),
 
-        addLocalNetOnlineToast: () => {
+        addLocalNetOnlineToast: useCallback(() => {
             setToasts(currentToasts => [
                 ...currentToasts,
                 {
@@ -62,9 +62,9 @@ export function useGlobalToast() {
                     color: 'success'
                 }
             ]);
-        },
+        }, [setToasts]),
 
-        addToast: (toast: OptionalIdToast) => {
+        addToast: useCallback((toast: OptionalIdToast) => {
             setToasts(currentToasts => [
                 ...currentToasts,
                 {
@@ -72,6 +72,6 @@ export function useGlobalToast() {
                     id: (++toastCounter).toString()
                 }
             ]);
-        }
+        }, [setToasts])
     };
 }

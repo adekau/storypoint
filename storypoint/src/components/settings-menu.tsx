@@ -7,28 +7,37 @@ import {
     EuiPopover,
     EuiSuperSelect,
 } from '@elastic/eui';
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRecoilState } from 'recoil';
 
+import { Themes } from '../../../shared/types/themes';
 import { isOpenState } from '../atoms/settings-menu';
-import { themeState } from '../atoms/theme';
+import setTheme from '../helpers/set-theme';
 import { useGlobalToast } from '../hooks/global-toast.hook';
 
+let initialLoad = true;
+
 export default function SettingsMenu() {
+    const [themeFieldValue, setThemeFieldValue] = useState<Themes>(
+        (window.localStorage.getItem('storypoint-theme') as Themes) ?? 'light'
+    );
     const [isOpen, setIsOpen] = useRecoilState(isOpenState);
-    const [theme, setTheme] = useRecoilState(themeState);
     const { addToast } = useGlobalToast();
 
-    const themeChange = (selection: 'light' | 'dark') => {
-        setTheme(selection);
-        localStorage.setItem('storypoint-theme', selection);
-        addToast({
-            title: 'Theme Changed',
-            text: <span>Theme switched to <strong>{selection}</strong></span>,
-            iconType: 'brush',
-            color: 'primary'
-        });
-    };
+    useEffect(() => {
+        localStorage.setItem('storypoint-theme', themeFieldValue);
+        setTheme(themeFieldValue);
+        if (!initialLoad)
+            addToast({
+                title: 'Theme Changed',
+                text: <span>Theme switched to <strong>{themeFieldValue}</strong></span>,
+                iconType: 'brush',
+                color: 'primary'
+            });
+        initialLoad = false;
+    }, [themeFieldValue, addToast]);
+
+    const themeChange = (selection: Themes) => setThemeFieldValue(selection);
 
     return (
         <EuiPopover
@@ -54,7 +63,8 @@ export default function SettingsMenu() {
                             value: 'light'
                         }
                     ]}
-                    valueOfSelected={theme}
+                    defaultValue={themeFieldValue}
+                    valueOfSelected={themeFieldValue}
                     onChange={themeChange}></EuiSuperSelect>
                 </EuiFormRow>
             </EuiForm>

@@ -8,10 +8,8 @@ import Logo from './components/logo';
 import Room from './components/room';
 import SettingsMenu from './components/settings-menu';
 import { useConnectionWatcher } from './hooks/connection-watcher.hook';
-import { useTheme } from './hooks/theme.hook';
 
 function App() {
-    useTheme();
     useConnectionWatcher();
 
     function AppRoutes() {

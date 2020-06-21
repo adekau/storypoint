@@ -38,7 +38,7 @@ export default function RoomHeader({ host }: RoomHeaderProps) {
             userId
         };
         webSocket.send(JSON.stringify(event));
-    }, [host, userId, webSocket]);
+    }, [host, userId, webSocket, webSocketStatus]);
     
     return (
         <EuiHeader style={{ padding: -24 }}>

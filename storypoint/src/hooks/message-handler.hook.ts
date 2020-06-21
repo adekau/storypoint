@@ -76,7 +76,8 @@ export function useMessageHandler() {
             history,
             toast,
             setRoom,
-            setSelectedCards
+            setSelectedCards,
+            setUserId
         ]
     );
 }
