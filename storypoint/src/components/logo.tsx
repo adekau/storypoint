@@ -9,7 +9,7 @@ export default function Logo() {
         <EuiHeaderLogo
             iconType="bullseye"
             onClick={() => history.push('/')}>
-            StoryPoints
+            StoryPoint
         </EuiHeaderLogo>
     );
 }
