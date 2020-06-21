@@ -7,4 +7,4 @@ USER deno
 
 COPY ./dist .
 
-CMD ["run", "--allow-net", "server.js"]
+CMD ["run", "--allow-net", "--allow-env", "server.js"]

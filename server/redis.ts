@@ -10,7 +10,7 @@ export const getRedisConnection: () => Promise<Redis | undefined> = memoize(
         let redis = undefined;
         try {
             redis = await connect({
-                hostname: 'localhost',
+                hostname: Deno.env.get("REDIS_HOST") ?? 'localhost',
                 port: 6379
             });
         } catch (ex) {
