@@ -9,13 +9,15 @@ jobs:
       matrix:
         kind: ['web', 'server', 'redis']
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ${{ matrix.kind }}
     steps:
       - uses: actions/checkout@v1
       - name: Get the version
         id: get_version
         run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
       - name: Publish Docker Hub
-        working-directory: ${{ matrix.kind }}
         uses: elgohr/Publish-Docker-Github-Action@2.14
         with:
           name: "dekau/storypoint-${{ matrix.kind }}"
