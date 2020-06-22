@@ -2,12 +2,11 @@ FROM node:lts-alpine as build
 
 WORKDIR /app
 
-COPY package.json .
-COPY yarn.lock .
-RUN yarn
+ENV PATH /app/node_modules/.bin:$PATH
 
 COPY . .
-RUN /app/node_modules/.bin/react-scripts build
+RUN yarn
+RUN yarn build
 
 FROM nginx:stable-alpine
 COPY --from=build /app/build /usr/share/nginx/html
