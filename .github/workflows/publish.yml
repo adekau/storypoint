@@ -1,0 +1,25 @@
+name: Publish
+on:
+  push:
+    tags:
+      - '*'
+jobs:
+  build:
+    strategy:
+      matrix:
+        kind: ['web', 'server', 'redis']
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: Get the version
+        id: get_version
+        run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
+      - name: Publish Docker Hub
+        uses: elgohr/Publish-Docker-Github-Action@2.14
+        with:
+          name: "dekau/storypoint-${{ matrix.kind }}"
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+          dockerfile: ${{ matrix.kind }}/Dockerfile
+          cache: true
+          tags:
