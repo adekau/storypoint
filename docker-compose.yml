@@ -2,16 +2,16 @@ version: '3.8'
 
 services: 
     redis:
-        image: storypoint/redis:latest
+        image: dekau/storypoint-redis:latest
         ports:
         - 6379
     server:
-        image: storypoint/server:latest
+        image: dekau/storypoint-server:latest
         ports: 
         - 8080:8080
         environment:
             REDIS_HOST: redis
     web:
-        image: storypoint/web:latest
+        image: dekau/storypoint-web:latest
         ports:
         - 80:80

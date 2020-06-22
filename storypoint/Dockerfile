@@ -4,8 +4,11 @@ WORKDIR /app
 
 ENV PATH /app/node_modules/.bin:$PATH
 
-COPY . .
+COPY package.json .
+COPY yarn.lock .
 RUN yarn
+
+COPY . .
 RUN yarn build
 
 FROM nginx:stable-alpine
