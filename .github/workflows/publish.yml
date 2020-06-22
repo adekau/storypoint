@@ -15,6 +15,7 @@ jobs:
         id: get_version
         run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
       - name: Publish Docker Hub
+        working-directory: ${{ matrix.kind }}
         uses: elgohr/Publish-Docker-Github-Action@2.14
         with:
           name: "dekau/storypoint-${{ matrix.kind }}"
