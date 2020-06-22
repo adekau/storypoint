@@ -22,4 +22,4 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
           dockerfile: ${{ matrix.kind }}/Dockerfile
           cache: true
-          tags:
+          tags: "latest,${{ steps.get_version.outputs.VERSION }}"
