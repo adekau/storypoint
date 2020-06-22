@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ${{ matrix.kind }}
+        working-directory: redis
     steps:
       - uses: actions/checkout@v1
       - name: Get the version
