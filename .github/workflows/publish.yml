@@ -9,9 +9,6 @@ jobs:
       matrix:
         kind: ['web', 'server', 'redis']
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: redis
     steps:
       - uses: actions/checkout@v1
       - name: Get the version
@@ -23,6 +20,7 @@ jobs:
           name: "dekau/storypoint-${{ matrix.kind }}"
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
-          dockerfile: ${{ matrix.kind }}/Dockerfile
+          dockerfile: Dockerfile
+          workdir: ${{ matrix.kind }}
           cache: true
           tags: "latest,${{ steps.get_version.outputs.VERSION }}"
