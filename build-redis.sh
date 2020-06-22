@@ -1,3 +1,3 @@
 #!/bin/sh
 
-docker build -t storypoint/redis ./redis
+docker build -t dekau/storypoint-redis ./redis

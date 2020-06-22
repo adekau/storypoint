@@ -6,4 +6,4 @@
 deno cache server/server.ts
 deno bundle server/server.ts server/dist/server.js
 
-docker build -t storypoint/server ./server
+docker build -t dekau/storypoint-server ./server

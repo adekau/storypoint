@@ -1,3 +1,3 @@
 #!/bin/sh
 
-docker build -t storypoint/web ./storypoint
+docker build -t dekau/storypoint-web ./storypoint
