@@ -22,7 +22,7 @@ jobs:
       - name: Run build script
         run: ./build-${{ matrix.kind }}.sh
       - name: Push to DockerHub
-        run: echo ~/.docker/config.json
+        run: cat ~/.docker/config.json
 
       # - name: Publish Docker Hub
       #   uses: elgohr/Publish-Docker-Github-Action@2.14
