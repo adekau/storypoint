@@ -14,8 +14,15 @@ jobs:
       - name: Get tag version
         id: get_version
         run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
+      - name: Docker Login
+        uses: azure/docker-login@v1
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
       - name: Run build script
         run: ./build-${{ matrix.kind }}.sh
+      - name: Push to DockerHub
+        run: echo ~/.docker/config.json
 
       # - name: Publish Docker Hub
       #   uses: elgohr/Publish-Docker-Github-Action@2.14
