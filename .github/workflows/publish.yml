@@ -28,6 +28,10 @@ jobs:
         run: docker tag ${{ steps.get_image_hash.outputs.IMAGE_HASH }} dekau/storypoint-${{ matrix.kind }}:${{ steps.get_version.outputs.VERSION }}
       - name: Tag latest
         run: docker tag ${{ steps.get_image_hash.outputs.IMAGE_HASH }} dekau/storypoint-${{ matrix.kind }}:latest
+      - name: Push release
+        run: docker push dekau/storypoint-${{ matrix.kind }}:${{ steps.get_version.outputs.VERSION }}
+      - name: Push latest
+        run: docker push dekau/storypoint-${{ matrix.kind }}:latest
 
       # - name: Publish Docker Hub
       #   uses: elgohr/Publish-Docker-Github-Action@2.14
