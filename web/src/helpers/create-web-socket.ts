@@ -6,7 +6,7 @@ export interface WebSocketEventCallbacks {
 };
 
 export function createWebSocket({ onOpen, onError, onClose, onMessage }: WebSocketEventCallbacks): WebSocket {
-    const ws = new WebSocket('ws://localhost/ws');
+    const ws = new WebSocket(`ws://${window.location.host}/ws`);
     ws.onerror = (error) => {
         if (onError)
             onError(error);
