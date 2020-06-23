@@ -21,8 +21,8 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
       - name: Run build script
         run: ./build-${{ matrix.kind }}.sh
-      - name: Push to DockerHub
-        run: cat ~/.docker/config.json
+      - name: Push to DockerHub Tag
+        run: docker push dekau/storypoint-${{ matrix.kind }}:${{ steps.get_version.outputs.VERSION }}
 
       # - name: Publish Docker Hub
       #   uses: elgohr/Publish-Docker-Github-Action@2.14
