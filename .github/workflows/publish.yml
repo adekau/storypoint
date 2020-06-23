@@ -22,7 +22,8 @@ jobs:
       - name: Run build script
         run: ./build-${{ matrix.kind }}.sh
       - name: Push to DockerHub Tag
-        run: docker push dekau/storypoint-${{ matrix.kind }}:${{ steps.get_version.outputs.VERSION }}
+        run: docker images
+        #run: docker push dekau/storypoint-${{ matrix.kind }}:${{ steps.get_version.outputs.VERSION }}
 
       # - name: Publish Docker Hub
       #   uses: elgohr/Publish-Docker-Github-Action@2.14
