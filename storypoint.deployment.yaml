@@ -27,7 +27,6 @@ kind: Service
 metadata:
   name: storypoint-web
 spec:
-  type: LoadBalancer
   ports:
     - port: 80
       targetPort: 80
@@ -102,7 +101,7 @@ spec:
               cpu: 100m
               memory: 250Mi
           ports:
-          - containerPort: 6379
+            - containerPort: 6379
 ---
 apiVersion: v1
 kind: Service
@@ -114,8 +113,8 @@ metadata:
     tier: backend
 spec:
   ports:
-  - port: 6379
-    targetPort: 6379
+    - port: 6379
+      targetPort: 6379
   selector:
     app: redis
     role: master
@@ -142,14 +141,14 @@ spec:
         tier: backend
     spec:
       containers:
-      - name: slave
-        image: gcr.io/google_samples/gb-redisslave:v3
-        resources:
-          requests:
-            cpu: 100m
-            memory: 100Mi
-        ports:
-        - containerPort: 6379
+        - name: slave
+          image: gcr.io/google_samples/gb-redisslave:v3
+          resources:
+            requests:
+              cpu: 100m
+              memory: 100Mi
+          ports:
+            - containerPort: 6379
 ---
 apiVersion: v1
 kind: Service
@@ -161,8 +160,24 @@ metadata:
     tier: backend
 spec:
   ports:
-  - port: 6379
+    - port: 6379
   selector:
     app: redis
     role: slave
     tier: backend
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: web-ingress
+  namespace: default
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+    - http:
+        paths:
+          - backend:
+              serviceName: storypoint-web
+              servicePort: 80
