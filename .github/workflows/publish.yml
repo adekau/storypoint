@@ -24,9 +24,10 @@ jobs:
       - name: Get image hash
         id: get_image_hash
         run: echo ::set-output name=IMAGE_HASH::$(docker images | awk -e '$1 ~ /storypoint-${{ matrix.kind }}/ {print $3}')
-      - name: Print image hash
-        run: echo ${{ steps.get_image_hash.outputs.IMAGE_HASH }}
-        #run: docker push dekau/storypoint-${{ matrix.kind }}:${{ steps.get_version.outputs.VERSION }}
+      - name: Tag release
+        run: docker tag ${{ steps.get_image_hash.outputs.IMAGE_HASH }} dekau/storypoint-${{ matrix.kind }}:${{ steps.get_version.outputs.VERSION }}
+      - name: Tag latest
+        run: docker tag ${{ steps.get_image_hash.outputs.IMAGE_HASH }} dekau/storypoint-${{ matrix.kind }}:latest
 
       # - name: Publish Docker Hub
       #   uses: elgohr/Publish-Docker-Github-Action@2.14
