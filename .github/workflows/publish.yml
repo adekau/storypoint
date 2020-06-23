@@ -32,14 +32,3 @@ jobs:
         run: docker push dekau/storypoint-${{ matrix.kind }}:${{ steps.get_version.outputs.VERSION }}
       - name: Push latest
         run: docker push dekau/storypoint-${{ matrix.kind }}:latest
-
-      # - name: Publish Docker Hub
-      #   uses: elgohr/Publish-Docker-Github-Action@2.14
-      #   with:
-      #     name: "dekau/storypoint-${{ matrix.kind }}"
-      #     username: ${{ secrets.DOCKER_USERNAME }}
-      #     password: ${{ secrets.DOCKER_PASSWORD }}
-      #     dockerfile: Dockerfile
-      #     workdir: ${{ matrix.kind }}
-      #     cache: true
-      #     tags: "latest,${{ steps.get_version.outputs.VERSION }}"
