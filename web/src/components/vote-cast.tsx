@@ -32,7 +32,8 @@ export function VoteCast(props: VoteCastProps) {
                         <EuiFlexItem grow={false}>
                             <EuiButton
                                 disabled={isDisabled}
-                                isLoading={isLoading}>
+                                isLoading={isLoading}
+                                onClick={() => console.log('hello latest')}>
                                 Cast Vote
                             </EuiButton>
                         </EuiFlexItem>
