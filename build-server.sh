@@ -1,5 +1,7 @@
 #!/bin/sh
 
+$DENO_VERSION = 1.1.1
+
 [ ! -d "./server/dist" ] && mkdir server/dist
 
 # if deno doesn't exist, install it
