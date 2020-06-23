@@ -9,7 +9,6 @@ curl -fsSL https://github.com/denoland/deno/releases/download/v${DENO_VERSION}/d
 unzip deno.zip
 rm deno.zip
 chmod 777 deno
-mv deno /bin/deno
 apk del .download
 
 # first rebuild the cache
