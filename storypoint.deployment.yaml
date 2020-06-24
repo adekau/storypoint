@@ -185,4 +185,4 @@ spec:
           - backend:
               serviceName: storypoint-server
               servicePort: 8080
-            path: /ws/*
+            path: /ws
