@@ -1103,10 +1103,10 @@
   dependencies:
     tslib "^1.9.3"
 
-"@elastic/eui@^25.0.0":
-  version "25.0.0"
-  resolved "https://registry.yarnpkg.com/@elastic/eui/-/eui-25.0.0.tgz#3bf293d3516192021e90d5f8282c122fb69792f9"
-  integrity sha512-VAAQox4oiGQhI4cFDe+6FxG0pc8neoZVF6uIHiqBEPqZJGGKiYA8U+AuOSpAG87l2qtF8mUtyc0a3zrqYgIXLQ==
+"@elastic/eui@^26.1.0":
+  version "26.1.0"
+  resolved "https://registry.yarnpkg.com/@elastic/eui/-/eui-26.1.0.tgz#618d7402908a5ccc803884047395fb334b97cbf7"
+  integrity sha512-jfrnYYVb3Q//tJBIYxv0ahnmxOMzUhuGmXiAROcCPr+d78JdCrpOc+qt8Cv9cG9Q0cDMWdtJxVhHGOMWuT1p0g==
   dependencies:
     "@types/chroma-js" "^2.0.0"
     "@types/enzyme" "^3.1.13"
@@ -1131,6 +1131,7 @@
     react-virtualized "^9.21.2"
     resize-observer-polyfill "^1.5.0"
     tabbable "^3.0.0"
+    text-diff "^1.0.1"
     uuid "^3.1.0"
 
 "@hapi/address@2.x.x":
@@ -8647,7 +8648,7 @@ prompts@^2.0.1:
     kleur "^3.0.3"
     sisteransi "^1.0.4"
 
-prop-types@^15.5.8, prop-types@^15.6.0, prop-types@^15.6.2, prop-types@^15.7.2:
+prop-types@^15.5.0, prop-types@^15.5.8, prop-types@^15.6.0, prop-types@^15.6.2, prop-types@^15.7.2:
   version "15.7.2"
   resolved "https://registry.yarnpkg.com/prop-types/-/prop-types-15.7.2.tgz#52c41e75b8c87e72b9d9360e0206b99dcbffa6c5"
   integrity sha512-8QQikdH7//R2vurIJSutZ1smHYTcLpRWEOlHnzcWHmBYrOGUysKwSsrC89BCiFj3CbrfJ/nXFdJepOVrY1GCHQ==
@@ -10347,6 +10348,11 @@ test-exclude@^5.2.3:
     minimatch "^3.0.4"
     read-pkg-up "^4.0.0"
     require-main-filename "^2.0.0"
+
+text-diff@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/text-diff/-/text-diff-1.0.1.tgz#6c105905435e337857375c9d2f6ca63e453ff565"
+  integrity sha1-bBBZBUNeM3hXN1ydL2ymPkU/9WU=
 
 text-table@0.2.0, text-table@^0.2.0:
   version "0.2.0"
