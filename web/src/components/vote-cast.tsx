@@ -16,7 +16,7 @@ export function VoteCast(props: VoteCastProps) {
     const { webSocketStatus } = useWebSocket();
     const online = useRecoilValue(onlineState);
     const isLoading = webSocketStatus === WebSocketStatus.Connecting;
-    const isDisabled = (webSocketStatus <= WebSocketStatus.Connecting) || !online || !selected;
+    const isDisabled = (webSocketStatus <= WebSocketStatus.Connecting) || !online || selected === null;
 
     return (
         <EuiPanel betaBadgeLabel={'Cast Vote'} paddingSize="l">
