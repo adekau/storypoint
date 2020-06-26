@@ -64,7 +64,6 @@ export default function Room() {
         <>
             <EuiPage
                 className={selectedCards.length ? 'bottomBar--open' : 'bottomBar--closed'}
-                style={{ padding: 40 }}
                 restrictWidth={1650}>
                 <EuiPageBody component="div">
                     <EuiPageHeader>
