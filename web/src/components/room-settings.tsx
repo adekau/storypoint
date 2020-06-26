@@ -52,7 +52,7 @@ export default function RoomSettings(props: RoomSettingsProps) {
     if (open)
         flyout = (
             <EuiFlyout
-                size="s"
+                size="m"
                 onClose={close}>
                 <EuiFlyoutHeader hasBorder>
                     <EuiTitle>
@@ -63,27 +63,29 @@ export default function RoomSettings(props: RoomSettingsProps) {
                     <EuiFocusTrap>
                         <EuiForm>
                             <EuiFormRow
+                                fullWidth
                                 label={
                                     <EuiToolTip content="Your display name in this room.">
                                         <span>Nickname <EuiIcon type="questionInCircle"></EuiIcon></span>
                                     </EuiToolTip>
                                 }
-                                display="columnCompressed">
+                                display="row">
                                 <EuiFieldText
+                                    fullWidth
                                     value={nicknameField}
-                                    compressed
                                     onChange={(ev) => setNicknameField(ev.target.value)}
                                 />
                             </EuiFormRow>
                             <EuiFormRow
+                                fullWidth
                                 label="Vote Options"
-                                display="columnCompressed">
+                                display="row">
                                 <EuiComboBox
+                                    fullWidth
                                     options={defaultOptions}
                                     selectedOptions={selectedOptions}
-                                    // onCreateOption={}
-                                    compressed>
-                                </EuiComboBox>
+                                // onCreateOption={}
+                                / >
                             </EuiFormRow>
                         </EuiForm>
                     </EuiFocusTrap>
