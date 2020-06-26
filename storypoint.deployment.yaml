@@ -56,7 +56,7 @@ spec:
             - containerPort: 8080
           env:
             - name: REDIS_HOST
-              value: storypoint-redis-redis-ha
+              value: storypoint-redis-redis-ha-haproxy
       restartPolicy: Always
 ---
 apiVersion: v1
