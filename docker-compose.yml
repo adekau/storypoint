@@ -1,3 +1,5 @@
+# Currently does not work. Need to map storypoint-server to localhost/ws somehow
+
 version: '3.8'
 
 services: 
