@@ -10,6 +10,7 @@ import {
     leaveEvent,
     respondWithError,
     trySend,
+    voteEvent,
 } from './event.ts';
 import Logger from './logger.ts';
 import { StoryPointEvent } from './types/story-point-event.ts';
@@ -95,6 +96,7 @@ async function handleEvent({ ev }: HandleEventArguments): Promise<void> {
             await handleWithArgs(hostChangeEvent);
             break;
         case 'vote':
+            await handleWithArgs(voteEvent);
             break;
         default:
             return;
