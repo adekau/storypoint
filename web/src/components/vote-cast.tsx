@@ -1,10 +1,12 @@
 import { EuiButton, EuiFlexGroup, EuiFlexItem, EuiPanel } from '@elastic/eui';
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 
 import { onlineState } from '../atoms/online';
+import { userIdState } from '../atoms/user-id';
 import { WebSocketStatus } from '../atoms/websocketStatus';
 import { useWebSocket } from '../hooks/websocket.hook';
+import { StoryPointEvent } from '../types/story-point-event';
 import { VoteCastCard } from './vote-cast-card';
 
 export interface VoteCastProps {
@@ -13,10 +15,22 @@ export interface VoteCastProps {
 
 export function VoteCast(props: VoteCastProps) {
     const [selected, setSelected] = useState<number | null>(null);
-    const { webSocketStatus } = useWebSocket();
+    const { webSocket, webSocketStatus } = useWebSocket();
     const online = useRecoilValue(onlineState);
+    const userId = useRecoilValue(userIdState);
     const isLoading = webSocketStatus === WebSocketStatus.Connecting;
     const isDisabled = (webSocketStatus <= WebSocketStatus.Connecting) || !online || selected === null;
+
+    const castVote = useCallback(() => {
+        if (webSocketStatus !== WebSocketStatus.Connected || !userId || !selected)
+            return;
+        const event: StoryPointEvent = {
+            event: 'vote',
+            userId,
+            vote: selected
+        }
+        webSocket.send(JSON.stringify(event));
+    }, [webSocket, userId, selected, webSocketStatus]);
 
     return (
         <EuiPanel betaBadgeLabel={'Cast Vote'} paddingSize="l">
@@ -32,7 +46,8 @@ export function VoteCast(props: VoteCastProps) {
                         <EuiFlexItem grow={false}>
                             <EuiButton
                                 disabled={isDisabled}
-                                isLoading={isLoading}>
+                                isLoading={isLoading}
+                                onClick={castVote}>
                                 Cast Vote
                             </EuiButton>
                         </EuiFlexItem>

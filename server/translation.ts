@@ -7,6 +7,7 @@ export function translateUsers(users: Array<IUser>): Array<IUserDetail> {
         userId: user.userId,
         roomId: user.roomId,
         nickname: user.nickname,
+        vote: user.vote
     }));
 }
 

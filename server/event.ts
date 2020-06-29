@@ -128,6 +128,23 @@ export async function hostChangeEvent({ ev, userId }: HandleEventArguments): Pro
     await emitEvent(room.users, ev);
 }
 
+export async function voteEvent({ ev }: HandleEventArguments): Promise<void> {
+    if (ev.event !== 'vote')
+        return;
+    const user = await getUser(ev.userId);
+    if (!user)
+        return;
+    const room = await getRoom(user.roomId);
+    if (!room)
+        return;
+    const newUser: IUser = {
+        ...user,
+        vote: ev.vote
+    };
+    await setUser(ev.userId, newUser);
+    await emitEvent(room.users, ev);
+}
+
 export async function respondNoPermissions({ userId, ws }: HandleEventArguments, action: string): Promise<void> {
     const event: StoryPointEvent = {
         event: 'no-permissions',

@@ -43,4 +43,8 @@ export type StoryPointEvent = {
     event: 'error';
     status: number;
     message: string;
+} | {
+    event: 'vote';
+    userId: string;
+    vote: number;
 };

@@ -94,6 +94,8 @@ async function handleEvent({ ev }: HandleEventArguments): Promise<void> {
         case 'hostChange':
             await handleWithArgs(hostChangeEvent);
             break;
+        case 'vote':
+            break;
         default:
             return;
     }
