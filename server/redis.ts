@@ -1,5 +1,5 @@
 import memoize from 'https://deno.land/x/lodash/memoize.js';
-import { Bulk, connect, Redis } from 'https://deno.land/x/redis/mod.ts';
+import { Bulk, connect, Redis } from 'https://deno.land/x/redis@v0.10.4/mod.ts';
 
 export const ROOMS_KEY = 'rooms';
 export const USERS_KEY = 'users';
